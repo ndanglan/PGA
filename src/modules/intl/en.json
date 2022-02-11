@@ -20,5 +20,12 @@
   "emailRequire": "Email is required!",
   "emailInvalid": "Email is invalid!",
   "passwordRequire": "Password is required!",
-  "minPasswordInvalid": "Password needs at least 4 character!"
+  "minPasswordInvalid": "Password needs at least 4 character!",
+  "repeatPasswordRequire": "Confirm your password",
+  "repeatPasswordInvalid": "Password is not match!",
+  "nameRequire": "Your name is required",
+  "nameInvalid": "Your name must be at least 2 characters",
+  "genderRequire": "Choose your gender",
+  "regionRequire": "Choose your region",
+  "stateRequire": "Choose your state"
 }
