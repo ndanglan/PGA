@@ -31,7 +31,6 @@ const RegisterPage = (props: Props) => {
   const [pid, setPid] = useState('');
 
   const getLocations = useCallback(async (id?: string) => {
-    setLoading(true);
     // điều kiện nếu có id thì gọi state và setState còn nếu không có id thì phải gọi region và setRegion
     const json = await dispatch(fetchThunk(id ? `${API_PATHS.location}?pid=${id}` : API_PATHS.location, 'get'));
 
@@ -51,8 +50,9 @@ const RegisterPage = (props: Props) => {
       return
     }
 
-    setLoading(false);
-    alert(getErrorMessageResponse(json))
+    if (json?.code !== RESPONSE_STATUS_SUCCESS) {
+      alert(getErrorMessageResponse(json))
+    }
   }, [dispatch])
 
   const setPID = (id: string) => {
