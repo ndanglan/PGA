@@ -13,7 +13,7 @@ import { getErrorMessageResponse } from '../../../utils'
 import { RESPONSE_STATUS_SUCCESS } from '../../../utils/httpResponseCode'
 import { fetchThunk } from '../../common/redux/thunk'
 import RegisterForm from '../components/RegisterForm'
-import AuthLayout from '../layout/AuthLayout'
+import logo from '../../../assets/img/logo.jpg';
 
 type Props = {}
 
@@ -88,7 +88,9 @@ const RegisterPage = (props: Props) => {
   }, [pid])
 
   return (
-    <AuthLayout>
+    <div className="container d-flex flex-column justify-content-md-center align-items-md-center"
+      style={{ minHeight: "100vh" }}>
+      <img src={logo} alt="logoPGA" style={{ maxWidth: '250px', margin: '32px' }} />
       <RegisterForm
         loading={loading}
         errorMessage={errorMessage}
@@ -101,7 +103,7 @@ const RegisterPage = (props: Props) => {
       <Link to={ROUTES.login} className="text-decoration-none">
         <FormattedMessage id="accountAlready" />
       </Link>
-    </AuthLayout>
+    </div>
   )
 }
 

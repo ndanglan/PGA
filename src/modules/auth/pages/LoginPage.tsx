@@ -14,7 +14,7 @@ import { getErrorMessageResponse } from '../../../utils';
 import { replace } from 'connected-react-router';
 import { ROUTES } from '../../../config/routes';
 import { Link } from 'react-router-dom';
-import AuthLayout from '../layout/AuthLayout';
+import logo from '../../../assets/img/logo.jpg';
 import { FormattedMessage } from 'react-intl';
 import { setUserInfo } from '../redux/authReducer';
 
@@ -49,13 +49,18 @@ const LoginPage = () => {
     }
     , [dispatch])
 
-  return <AuthLayout>
-    <LoginForm onLogin={onLogin} loading={loading} errorMessage={errorMessage} />
+  return (
+    <div className="container d-flex flex-column justify-content-md-center align-items-md-center"
+      style={{ minHeight: "100vh" }}>
+      <img src={logo} alt="logoPGA" style={{ maxWidth: '250px', margin: '32px' }} />
+      <LoginForm onLogin={onLogin} loading={loading} errorMessage={errorMessage} />
 
-    <Link to={ROUTES.register} className="text-decoration-none">
-      <FormattedMessage id="accountNotAlready" />
-    </Link>
-  </AuthLayout>;
+      <Link to={ROUTES.register} className="text-decoration-none">
+        <FormattedMessage id="accountNotAlready" />
+      </Link>
+    </div>
+  )
+
 };
 
 export default LoginPage;
