@@ -3,10 +3,21 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Provider } from 'react-redux';
+import configureStore from './redux/configStore';
+import { PersistGate } from 'redux-persist/integration/react'
+import smoothscroll from 'smoothscroll-polyfill';
+smoothscroll.polyfill();
+const { store, persistor } = configureStore({});
+console.log(store);
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <App />
+      </PersistGate>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
