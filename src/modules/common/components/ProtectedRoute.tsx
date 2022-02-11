@@ -1,20 +1,25 @@
 import Cookies from 'js-cookie';
 import React from 'react'
-import { Navigate, Outlet, RouteProps } from 'react-router-dom'
+import { RouteProps, Route, Redirect } from 'react-router-dom'
+import { ROUTES } from '../../../config/routes';
 import { ACCESS_TOKEN_KEY } from '../../../utils/constants';
 
 interface Props extends RouteProps { }
 
 const ProtectedRoute = (props: Props) => {
+  const { ...rest } = props;
   const auth = Cookies.get(ACCESS_TOKEN_KEY);
+  console.log(rest);
 
   if (auth) {
     // OUtlet component = this.props.children
-    return <Outlet />
+    return <Route {...rest} />
   }
 
   return (
-    <Navigate to="/login" />
+    <Redirect to={{
+      pathname: ROUTES.login
+    }} />
   )
 }
 

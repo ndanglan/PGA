@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import LoginForm from '../components/LoginForm';
-import logo from '../../../assets/img/logo.jpg';
-import { ILoginParams } from '../../../models/loginModel';
+import { ILoginParams } from '../../../models/authModel';
 import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppState } from '../../../redux/reducer';
@@ -12,42 +11,51 @@ import { Action } from 'typesafe-actions';
 import Cookies from 'js-cookie';
 import { ACCESS_TOKEN_KEY } from '../../../utils/constants';
 import { getErrorMessageResponse } from '../../../utils';
+import { replace } from 'connected-react-router';
+import { ROUTES } from '../../../config/routes';
+import { Link } from 'react-router-dom';
+import AuthLayout from '../layout/AuthLayout';
+import { FormattedMessage } from 'react-intl';
+import { setUserInfo } from '../redux/authReducer';
 
 const LoginPage = () => {
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('')
-  const onLogin = async (values: ILoginParams) => {
-    setErrorMessage('');
-    setLoading(true);
 
-    const json = await dispatch(
-      fetchThunk(API_PATHS.signIn, 'post', {
-        email: values.email,
-        password: values.password
-      }))
+  const onLogin = useCallback(
+    async (values: ILoginParams) => {
+      setErrorMessage('');
+      setLoading(true);
 
-    setLoading(false)
+      const json = await dispatch(
+        fetchThunk(API_PATHS.signIn, 'post', {
+          email: values.email,
+          password: values.password
+        }))
 
-    if (json?.code === RESPONSE_STATUS_SUCCESS) {
-      Cookies.set(ACCESS_TOKEN_KEY, json.data.token, { expires: values.rememberMe ? 7 : undefined });
-      console.log(json);
+      setLoading(false)
 
-      return;
+      if (json?.code === RESPONSE_STATUS_SUCCESS) {
+        dispatch(setUserInfo(json.data))
+
+        Cookies.set(ACCESS_TOKEN_KEY, json.data.token, { expires: values.rememberMe ? 7 : undefined });
+
+        dispatch(replace(ROUTES.home))
+        return;
+      }
+
+      setErrorMessage(getErrorMessageResponse(json))
     }
+    , [dispatch])
 
-    setErrorMessage(getErrorMessageResponse(json))
-  }
-  return <div
-    className="container d-flex flex-column justify-content-md-center align-items-md-center"
-    style={{ height: "100vh" }}>
-    <img
-      src={logo}
-      alt="logo"
-      style={{ maxWidth: '250px', margin: '32px' }}
-    />
+  return <AuthLayout>
     <LoginForm onLogin={onLogin} loading={loading} errorMessage={errorMessage} />
-  </div>;
+
+    <Link to={ROUTES.register} className="text-decoration-none">
+      <FormattedMessage id="accountNotAlready" />
+    </Link>
+  </AuthLayout>;
 };
 
 export default LoginPage;

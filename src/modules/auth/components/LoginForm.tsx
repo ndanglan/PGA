@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ILoginParams, ILoginValidation } from '../../../models/loginModel';
+import { FormattedMessage } from 'react-intl';
+import { ILoginParams, ILoginValidation } from '../../../models/authModel';
 import { validateLogin, validLogin } from '../utils';
 
 interface Props {
@@ -10,13 +11,22 @@ interface Props {
 
 const LoginForm = (props: Props) => {
 
-  // logic xử lí validate form 
   const [formValues, setFormValues] = useState<ILoginParams>({
     email: '',
     password: '',
     rememberMe: false
   })
-  const [validate, setValidate] = useState<ILoginValidation>()
+  const [validate, setValidate] = useState<ILoginValidation>({
+    email: '',
+    password: ''
+  })
+
+  const resetValidate = (field: string) => {
+    setValidate((prev: ILoginValidation) => ({
+      ...prev,
+      [`${field}`]: ''
+    }))
+  }
 
   const handleSubmit = () => {
     const validObj = validateLogin(formValues);
@@ -39,39 +49,44 @@ const LoginForm = (props: Props) => {
     className="row g-3 needs-validation mt-3"
   >
     <div className="col-md-12">
-      <label htmlFor="inputEmail" className="form-label">
-        Địa chỉ Email
+      <label htmlFor="inputEmail" className="form-label text-capitalize">
+        <FormattedMessage id="email" />
       </label>
-
       <input
         type="text"
         className="form-control"
         id="inputEmail"
         value={formValues.email}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormValues({ ...formValues, email: e.target.value })}
+        onClick={() => {
+          resetValidate('email')
+        }}
       />
 
       {!!validate?.email && (
         <small className="text-danger">
-          {validate.email}
+          <FormattedMessage id={validate.email} />
         </small>
       )}
     </div>
 
     <div className="col-md-12">
       <label htmlFor="inputPassword" className="form-label">
-        Mật khẩu
+        <FormattedMessage id="password" />
       </label>
       <input
-        type="text"
+        type="password"
         className="form-control"
         id="inputPassword"
         value={formValues.password}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormValues({ ...formValues, password: e.target.value })}
+        onClick={() => {
+          resetValidate('password')
+        }}
       />
       {!!validate?.password && (
         <small className="text-danger">
-          {validate.password}
+          <FormattedMessage id={validate.password} />
         </small>
       )}
     </div>
@@ -88,7 +103,7 @@ const LoginForm = (props: Props) => {
           }}
         />
         <label htmlFor="invalidCheck" className="form-check-label">
-          Lưu thông tin đăng nhập
+          <FormattedMessage id="rememberMe" />
         </label>
       </div>
     </div>
@@ -96,10 +111,11 @@ const LoginForm = (props: Props) => {
     <div className="row justify-content-md-center" style={{ margin: '16px 0' }}>
       <div className="col-md-auto">
         <button className="btn btn-primary" type="submit" style={{ minWidth: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          Đăng Nhập
+          <FormattedMessage id="signIn" />
         </button>
       </div>
     </div>
+
   </form>;
 };
 

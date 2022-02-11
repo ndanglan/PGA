@@ -8,22 +8,25 @@ import configureStore, { history } from './redux/configStore';
 import { PersistGate } from 'redux-persist/integration/react'
 import smoothscroll from 'smoothscroll-polyfill';
 import { ConnectedRouter } from 'connected-react-router';
-import { BrowserRouter } from 'react-router-dom';
+import ConnectedIntlProvider from './modules/intl/components/ConnectedIntlProvider';
+import { setLocale } from './modules/intl/redux/intlReducer';
 
 smoothscroll.polyfill();
 
-const { store } = configureStore({});
+const { store, persistor } = configureStore({});
+
+store.dispatch(setLocale('vi'))
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      {/* <PersistGate loading={null} persistor={persistor}> */}
-      {/* <ConnectedRouter history={history}> */}
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-      {/* </ConnectedRouter> */}
-      {/* </PersistGate> */}
+      <PersistGate loading={null} persistor={persistor}>
+        <ConnectedRouter history={history}>
+          <ConnectedIntlProvider>
+            <App />
+          </ConnectedIntlProvider>
+        </ConnectedRouter>
+      </PersistGate>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

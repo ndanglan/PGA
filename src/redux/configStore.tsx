@@ -13,32 +13,32 @@ const composeEnhancers =
     (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
   compose;
 
-// export const persistConfig = {
-//   key: 'root',
-//   storage,
-// };
+export const persistConfig = {
+  key: 'root',
+  storage,
+};
 
 export default function configureStore(preloadedState: any) {
 
   // delay quá trình render UI app của bạn cho đến khi state đã được lấy ra và lưu trở lại vào Redux.
-  // const persistedReducer = persistReducer(
-  //   // persistConfig,
-  //   createRootReducer(history),
-  // );
+  const persistedReducer = persistReducer(
+    persistConfig,
+    createRootReducer(history),
+  );
 
   const store = createStore(
-    createRootReducer(), // root reducer with router state
+    persistedReducer, // root reducer with router state
     preloadedState,
     composeEnhancers(
       applyMiddleware(
+        routerMiddleware(history), // for dispatching history actions
         thunk,
-        // routerMiddleware(history), // for dispatching history actions
         // ... other middlewares ...
       ),
     ),
   );
 
-  // const persistor = persistStore(store);
+  const persistor = persistStore(store);
 
-  return { store };
+  return { store, persistor };
 }
