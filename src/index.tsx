@@ -4,19 +4,26 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
-import configureStore from './redux/configStore';
+import configureStore, { history } from './redux/configStore';
 import { PersistGate } from 'redux-persist/integration/react'
 import smoothscroll from 'smoothscroll-polyfill';
+import { ConnectedRouter } from 'connected-react-router';
+import { BrowserRouter } from 'react-router-dom';
+
 smoothscroll.polyfill();
-const { store, persistor } = configureStore({});
-console.log(store);
+
+const { store } = configureStore({});
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
+      {/* <PersistGate loading={null} persistor={persistor}> */}
+      {/* <ConnectedRouter history={history}> */}
+      <BrowserRouter>
         <App />
-      </PersistGate>
+      </BrowserRouter>
+      {/* </ConnectedRouter> */}
+      {/* </PersistGate> */}
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

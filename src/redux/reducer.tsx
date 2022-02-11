@@ -5,12 +5,13 @@ import authReducer, { AuthState } from '../modules/auth/redux/authReducer';
 
 export interface AppState {
   profile: AuthState;
+  // router: RouterState
 }
 
-export default function createRootReducer(history: History) {
+export default function createRootReducer() {
   return combineReducers({
     // để quản lý router trong redux
-    router: connectRouter(history),
+    // router: connectRouter(history),
     profile: authReducer,
   });
 }
