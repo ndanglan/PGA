@@ -8,8 +8,8 @@ interface Props {
   errorMessage: string,
   regions?: ILocationParams[],
   states?: ILocationParams[],
-  setPID(id?: string): void
   onRegister(values: IRegisterParams): void,
+  getLocations(id?: string): void
 }
 
 const RegisterForm = (props: Props) => {
@@ -239,7 +239,7 @@ const RegisterForm = (props: Props) => {
               region: e.target.value,
               state: ''
             }))
-            props.setPID(e.target.value)
+            props.getLocations(e.target.value)
           }}
           onClick={(e) => {
             resetValidateField('region');

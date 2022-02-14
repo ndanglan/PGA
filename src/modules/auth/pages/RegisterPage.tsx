@@ -28,7 +28,6 @@ const RegisterPage = (props: Props) => {
     regions: [],
     states: []
   });
-  const [pid, setPid] = useState('');
 
   const getLocations = useCallback(async (id?: string) => {
     // điều kiện nếu có id thì gọi state và setState còn nếu không có id thì phải gọi region và setRegion
@@ -49,15 +48,7 @@ const RegisterPage = (props: Props) => {
 
       return
     }
-
-    if (json?.code !== RESPONSE_STATUS_SUCCESS) {
-      alert(getErrorMessageResponse(json))
-    }
   }, [dispatch])
-
-  const setPID = (id: string) => {
-    setPid(id);
-  }
 
   const onRegister = useCallback(async (values: IRegisterParams) => {
     setErrorMessage('');
@@ -84,8 +75,8 @@ const RegisterPage = (props: Props) => {
   }, [dispatch])
 
   useEffect(() => {
-    getLocations(pid);
-  }, [pid])
+    getLocations();
+  }, [])
 
   return (
     <div className="container d-flex flex-column justify-content-md-center align-items-md-center"
@@ -97,7 +88,7 @@ const RegisterPage = (props: Props) => {
         onRegister={onRegister}
         regions={locations.regions}
         states={locations.states}
-        setPID={setPID}
+        getLocations={getLocations}
       />
 
       <Link to={ROUTES.login} className="text-decoration-none">
