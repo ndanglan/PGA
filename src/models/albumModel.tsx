@@ -1,7 +1,9 @@
 export interface IAlbum {
-  albumId: number,
+  albumId?: number,
   id: number,
   title: string,
-  url: string,
+  prevTitle: string,
+  changed: boolean,
+  url?: string,
   thumbnailUrl: string
 }
