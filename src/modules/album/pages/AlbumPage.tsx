@@ -4,8 +4,6 @@ import { ThunkDispatch } from 'redux-thunk'
 import { Action } from 'typesafe-actions'
 import { API_PATHS } from '../../../config/api'
 import { AppState } from '../../../redux/reducer'
-import { fetchThunk } from '../../common/redux/thunk';
-import { IAlbum } from '../../../models/albumModel'
 import ListItem from '../components/ListItem'
 import { confirmTitle, resetTitle, setAlbum } from '../redux/albumReducer'
 

@@ -19,25 +19,6 @@ const ListItem = (props: Props) => {
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
   const { id, title, prevTitle, thumbnailUrl } = props;
 
-  const [valueTitle, setValueTitle] = useState(() => {
-    if (prevTitle === title) {
-      return title
-    } else {
-      return prevTitle
-    }
-  });
-
-  // set dữ liệu vào title ( là title đang được thay đổi)
-  useEffect(() => {
-    console.log('title', title);
-
-    dispatch(setTitleValue(valueTitle, id))
-  }, [valueTitle])
-
-  // set lại title hiện ra ở màn hình sau khi confirm hoặc reset 
-  useEffect(() => {
-    setValueTitle(title)
-  }, [title])
   return (
     <div className="card d-flex p-3 flex-row"
       style={{
@@ -50,12 +31,12 @@ const ListItem = (props: Props) => {
         <input
           type="text"
           className="w-100 p-0 input-item"
-          value={valueTitle}
+          value={title}
           style={{
             backgroundColor: id % 2 === 0 ? 'grey' : 'white',
           }}
           onChange={(e) => {
-            setValueTitle(e.target.value)
+            dispatch(setTitleValue(e.target.value, id))
           }}
         />
         <div>
