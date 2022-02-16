@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie';
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'typesafe-actions';
@@ -8,8 +8,7 @@ import { AppState } from '../../../redux/reducer';
 import { ACCESS_TOKEN_KEY } from '../../../utils/constants';
 import { RESPONSE_STATUS_SUCCESS } from '../../../utils/httpResponseCode';
 import { setUserInfo } from '../../auth/redux/authReducer';
-import { fetchThunk } from '../../common/redux/thunk';
-import Header from '../components/Header'
+import Header from '../../common/components/Header'
 
 const HomePage = () => {
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
@@ -42,9 +41,10 @@ const HomePage = () => {
     }
   }, [dispatch, user]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     getProfile();
   }, [getProfile]);
+
   return (
     <Header name={user?.name} avatar={user?.avatar} />
   )

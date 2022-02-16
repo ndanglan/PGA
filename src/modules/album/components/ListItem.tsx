@@ -16,13 +16,9 @@ const ListItem = (props: Props) => {
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitleState(e.target.value);
-    const timout = setTimeout(() => {
+    setTimeout(() => {
       props.onChange(e.target.value, id)
     }, 500);
-
-    return () => {
-      clearTimeout(timout)
-    }
   }
 
   useEffect(() => {

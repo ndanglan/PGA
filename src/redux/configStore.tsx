@@ -16,6 +16,7 @@ const composeEnhancers =
 export const persistConfig = {
   key: 'root',
   storage,
+  whitelist: ['profile', 'router', 'intl']
 };
 
 export default function configureStore(preloadedState: any) {

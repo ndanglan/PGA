@@ -9,6 +9,7 @@ import { AppState } from '../../../redux/reducer'
 import { ACCESS_TOKEN_KEY } from '../../../utils/constants';
 import { removeAuthorization } from '../../auth/redux/authReducer';
 import { Link } from 'react-router-dom';
+import { FormattedMessage } from 'react-intl';
 
 interface Props {
   name?: string,
@@ -23,10 +24,14 @@ const Header = (props: Props) => {
         <div className="" id="navbarNav">
           <ul className="navbar-nav d-flex flex-row gap-3">
             <li className="nav-item">
-              <Link className="nav-link" to={ROUTES.album}>Album</Link>
+              <Link className="nav-link" to={ROUTES.album}>
+                <FormattedMessage id="album" />
+              </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to={ROUTES.userInfo} >User Information</Link>
+              <Link className="nav-link" to={ROUTES.userInfo} >
+                <FormattedMessage id="userInfo" />
+              </Link>
             </li>
           </ul>
         </div>
@@ -56,7 +61,7 @@ const Header = (props: Props) => {
               dispatch(replace(ROUTES.login))
               dispatch(removeAuthorization())
             }}>
-              Đăng xuất
+              <FormattedMessage id="signOut" />
             </button>
           </div>
         </div>

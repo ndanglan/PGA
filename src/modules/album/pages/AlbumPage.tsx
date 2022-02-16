@@ -1,5 +1,6 @@
 import { push } from 'connected-react-router'
 import React, { memo, useCallback, useEffect, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { useDispatch, useSelector } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
 import { Action } from 'typesafe-actions'
@@ -25,6 +26,7 @@ const AlbumPage = () => {
 
       const json = await dispatch(async (dispatch, getState) => {
         const { album } = getState();
+        console.log(album.albums.length);
 
         if (album.albums.length > 0) {
           const newAlbums = album.albums.map(item => {
@@ -60,17 +62,25 @@ const AlbumPage = () => {
     , [dispatch]);
 
   const onChange = useCallback((title: string, id: number) => {
-    const newArr = albums.map(album => {
-      if (album.id === id) {
-        if (album.title !== title) {
-          setChanged(true)
-          album.title = title;
+    setAlbums((prev: IAlbum[]) => {
+      let check = false;
+      const newArr = prev.map(album => {
+        if (album.id === id) {
+          if (album.title !== title) {
+            // setChanged(true);
+            album.title = title;
+          }
         }
-      }
-      return album
-    });
+        if (album.title !== album.prevTitle) {
+          check = true;
+        }
+        return album
+      });
+      setChanged(check);
 
-    setAlbums(newArr)
+      return newArr;
+    })
+
   }, []);
 
   const onConfirm = (list: IAlbum[]) => {
@@ -82,7 +92,7 @@ const AlbumPage = () => {
     })
 
     dispatch(setAlbum(newList))
-
+    setChanged(false);
   }
 
   const onReset = (list: IAlbum[]) => {
@@ -92,9 +102,9 @@ const AlbumPage = () => {
       }
       return album
     })
-    console.log(newList);
 
     dispatch(setAlbum(newList))
+    setChanged(false);
   }
 
   useEffect(() => {
@@ -104,10 +114,10 @@ const AlbumPage = () => {
   return (
     <div className="container mx-auto mt-5 d-flex flex-column" style={{ maxWidth: '600px' }}>
       <div className="d-flex justify-content-end mb-3" style={{ columnGap: '20px' }}>
-        <button type="button" className="btn btn-secondary" onClick={(e) => {
+        <button type="button" className="btn btn-secondary" onClick={() => {
           dispatch(push(ROUTES.home))
         }}>
-          Quay về Trang chủ
+          <FormattedMessage id="backTohome" />
         </button>
         <button
           type="button"
@@ -118,7 +128,7 @@ const AlbumPage = () => {
           }}
           disabled={changed ? false : true}
         >
-          Confirm
+          <FormattedMessage id="confirm" />
         </button>
         <button
           type="button"
@@ -127,7 +137,7 @@ const AlbumPage = () => {
             onReset(albums)
           }}
         >
-          Reset
+          <FormattedMessage id="reset" />
         </button>
       </div>
       <div className="d-flex flex-column gap-3">

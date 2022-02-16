@@ -4,6 +4,10 @@
   "password": "Password",
   "register": "Register",
   "signIn": "Sign In",
+  "signOut": "Sign Out",
+  "backTohome": "Back To HomePage",
+  "reset": "Reset",
+  "confirm": "Confirm",
   "name": "Name",
   "repeatPassword": "Confirm password",
   "male": "Male",
@@ -28,5 +32,7 @@
   "nameInvalid": "Your name must be at least 2 characters",
   "genderRequire": "Choose your gender",
   "regionRequire": "Choose your region",
-  "stateRequire": "Choose your state"
+  "stateRequire": "Choose your state",
+  "userInfo": "User Information",
+  "album": "Album"
 }

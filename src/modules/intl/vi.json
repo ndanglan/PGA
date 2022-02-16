@@ -4,6 +4,10 @@
   "password": "Mật khẩu",
   "register": "Đăng ký",
   "signIn": "Đăng nhập",
+  "signOut": "Đăng xuất",
+  "backTohome": "Quay về Trang chủ",
+  "reset": "Làm lại",
+  "confirm": "Xác nhận",
   "name": "Họ và Tên",
   "repeatPassword": "Nhập lại mật khẩu",
   "male": "Nam",
@@ -28,5 +32,7 @@
   "nameInvalid": "Họ và tên tối thiểu 2 ký tự",
   "genderRequire": "Vui lòng chọn giới tính",
   "regionRequire": "Vui lòng chọn quốc gia",
-  "stateRequire": "Vui lòng chọn thành phố"
+  "stateRequire": "Vui lòng chọn thành phố",
+  "userInfo": "Thông tin người dùng",
+  "album": "Trang Album"
 }
