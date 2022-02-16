@@ -1,43 +1,33 @@
-import React, { useEffect, useState, memo, useRef } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
-import { Action } from 'typesafe-actions';
-import { AppState } from '../../../redux/reducer';
-import { activeChange } from '../redux/albumReducer';
+import React, { useState, memo, useEffect } from 'react'
 import "../styles/ListItem.css"
 
 interface Props {
   id: number,
   title: string,
   thumbnailUrl: string,
+  prevTitle?: string,
   changed: boolean,
   onChange(values: string, id: number): void
 }
 
 const ListItem = (props: Props) => {
-  const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
-  const { id, title, thumbnailUrl } = props;
+  const { id, title, thumbnailUrl, prevTitle } = props;
   const [titleState, setTitleState] = useState(title)
-  const albumObj = useSelector((state: AppState) => state.album);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!albumObj.changed) {
-      dispatch(activeChange())
-    }
     setTitleState(e.target.value);
-    const confirm = setTimeout(() => {
+    const timout = setTimeout(() => {
       props.onChange(e.target.value, id)
     }, 500);
+
     return () => {
-      clearTimeout(confirm);
+      clearTimeout(timout)
     }
   }
 
   useEffect(() => {
-    console.log(`curTitle:${id}`, titleState);
-
-  }, [titleState])
-
+    setTitleState(title)
+  }, [title, prevTitle])
 
   return (
     <div className="card d-flex p-3 flex-row"
@@ -51,7 +41,7 @@ const ListItem = (props: Props) => {
         <input
           type="text"
           className="w-100 p-0 input-item"
-          value={albumObj.changed ? titleState : title}
+          value={titleState}
           style={{
             backgroundColor: id % 2 === 0 ? 'grey' : 'white',
           }}

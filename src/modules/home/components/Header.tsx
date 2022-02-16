@@ -41,12 +41,12 @@ const Header = (props: Props) => {
               height: '50px'
             }}>
               <p style={{
-                fontSize: '16px',
-                lineHeight: '16px',
+                fontSize: '20px',
+                lineHeight: '20px',
                 fontWeight: 'bold',
                 marginBottom: '0'
               }}>
-                {props.name?.charAt(0)}
+                {props.name?.charAt(0).toUpperCase()}
               </p>
             </div>
           )}
