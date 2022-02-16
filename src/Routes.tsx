@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 import React, { lazy, Suspense } from 'react'
 import { useLocation } from 'react-router';
 import {
@@ -6,6 +7,7 @@ import {
 } from "react-router-dom";
 import { ROUTES } from './config/routes';
 import ProtectedRoute from './modules/common/components/ProtectedRoute';
+import { ACCESS_TOKEN_KEY } from './utils/constants';
 
 
 const LoginPage = lazy(() => import('./modules/auth/pages/LoginPage'));
@@ -17,14 +19,16 @@ const UserInfoPage = lazy(() => import('./modules/userinfo/pages/UserInfoPage'))
 
 const MainRoutes = () => {
   const location = useLocation();
+  const auth = Cookies.get(ACCESS_TOKEN_KEY);
+  console.log(auth);
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Switch location={location}>
         <Route path={ROUTES.login} component={LoginPage} />
         <ProtectedRoute path={ROUTES.home} component={HomePage} />
-        <Route path={ROUTES.userInfo} component={UserInfoPage} />
-        <Route path={ROUTES.album} component={AlbumPage}></Route>
+        <ProtectedRoute path={ROUTES.userInfo} component={UserInfoPage} />
+        <ProtectedRoute path={ROUTES.album} component={AlbumPage}></ProtectedRoute>
         <Route path={ROUTES.register} component={RegisterPage} />
         {/* đổi chỗ thì nó sẽ ưu tiên tìm đến ROUTE "/home" trước nên k cần exact còn nếu để như dưới đây thì nó sẽ chạy đến / trước rồi mới đến /home nên cần exact (exact dùng khi có route có path chứa hoặc tương tự nhau) */}
         <ProtectedRoute exact path="/" component={HomePage} />

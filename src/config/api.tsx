@@ -23,5 +23,7 @@ export const API_PATHS = {
   register: `${getBaseUrl(APIService.auth)}/register`,
   userProfile: `${getBaseUrl(APIService.public)}/user`,
   location: `${getBaseUrl(APIService.public)}/location`,
-  album: 'https://jsonplaceholder.typicode.com/photos'
+  album: 'https://jsonplaceholder.typicode.com/photos',
 };
+
+// ?_start=1&_end=20

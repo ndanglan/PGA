@@ -1,5 +1,6 @@
 import { push } from 'connected-react-router'
-import React, { memo, useCallback, useEffect, useState } from 'react'
+import { isBuffer } from 'lodash'
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { useDispatch, useSelector } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
@@ -9,7 +10,7 @@ import { ROUTES } from '../../../config/routes'
 import { IAlbum } from '../../../models/albumModel'
 import { AppState } from '../../../redux/reducer'
 import ListItem from '../components/ListItem'
-import { setAlbum } from '../redux/albumReducer'
+import { setAlbum, updateAlbum } from '../redux/albumReducer'
 
 const AlbumPage = () => {
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
@@ -18,37 +19,28 @@ const AlbumPage = () => {
   const albumObj = useSelector((state: AppState) => state.album);
   const [albums, setAlbums] = useState<IAlbum[]>(albumObj.albums);
   const [changed, setChanged] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [amount, setAmount] = useState(10);
 
   const fetchAlbum = useCallback(
-    async () => {
+    async (amount: number) => {
       setErrorMessage('');
       setLoading(true);
 
       const json = await dispatch(async (dispatch, getState) => {
         const { album } = getState();
-        console.log(album.albums.length);
 
-        if (album.albums.length > 0) {
-          const newAlbums = album.albums.map(item => {
-            return {
-              ...item,
-              prevTitle: item.title
-            }
-          })
-          return newAlbums
-        }
-
-        const res = await fetch(API_PATHS.album);
+        const res = await fetch(`${API_PATHS.album}?_start=${amount - 10 === 0 ? amount - 10 : amount - 1}&_end=${amount}`);
 
         const resData = await res.json();
 
-        return resData
+        return { resData, albums: album.albums }
       });
 
       setLoading(false);
 
-      if (json?.length > 0) {
-        const newJson = json.slice(0, 10).map((item: IAlbum) => {
+      if (json.resData?.length > 0 && json.albums.length === 0) {
+        const newJson = json.resData.map((item: IAlbum) => {
           return {
             ...item,
             prevTitle: item.title
@@ -57,6 +49,19 @@ const AlbumPage = () => {
         dispatch(setAlbum(newJson))
         setAlbums(newJson)
         return;
+      }
+      else if (json.albums.length !== 0) {
+        const newJson = json.resData.map((item: IAlbum) => {
+          return {
+            ...item,
+            prevTitle: item.title
+          }
+        })
+        dispatch(updateAlbum(newJson));
+        setAlbums((prev) => ([
+          ...prev,
+          ...newJson
+        ]))
       }
     }
     , [dispatch]);
@@ -67,7 +72,6 @@ const AlbumPage = () => {
       const newArr = prev.map(album => {
         if (album.id === id) {
           if (album.title !== title) {
-            // setChanged(true);
             album.title = title;
           }
         }
@@ -107,13 +111,39 @@ const AlbumPage = () => {
     setChanged(false);
   }
 
+  const isBottom = (ref: React.RefObject<HTMLDivElement>) => {
+    if (!ref.current) {
+      return false
+    }
+    return ref.current.getBoundingClientRect().bottom <= window.innerHeight;
+  }
   useEffect(() => {
-    fetchAlbum();
+    fetchAlbum(amount);
+  }, [amount])
+
+  useEffect(() => {
+
+    const onScroll = () => {
+      if (isBottom(contentRef)) {
+        setAmount(prev => prev + 1)
+      }
+    }
+
+    window.addEventListener('scroll', onScroll)
+
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+    }
   }, [])
+  useEffect(() => {
+    console.log(albums);
+
+  }, [albums])
 
   return (
-    <div className="container mx-auto mt-5 d-flex flex-column" style={{ maxWidth: '600px' }}>
+    <div ref={contentRef} className="container mx-auto mt-5 d-flex flex-column" style={{ maxWidth: '600px' }}>
       <div className="d-flex justify-content-end mb-3" style={{ columnGap: '20px' }}>
+        <button type="button" className="btn btn-secondary" onClick={() => fetchAlbum(20)}>Refresh</button>
         <button type="button" className="btn btn-secondary" onClick={() => {
           dispatch(push(ROUTES.home))
         }}>

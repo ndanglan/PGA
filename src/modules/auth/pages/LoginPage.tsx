@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import LoginForm from '../components/LoginForm';
 import { ILoginParams } from '../../../models/authModel';
 import { useDispatch } from 'react-redux';
@@ -21,7 +21,10 @@ import { setUserInfo } from '../redux/authReducer';
 const LoginPage = () => {
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('')
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const auth = useMemo(() => {
+    return Cookies.get(ACCESS_TOKEN_KEY);
+  }, [])
 
   const onLogin = useCallback(
     async (values: ILoginParams) => {
@@ -48,6 +51,13 @@ const LoginPage = () => {
       setErrorMessage(getErrorMessageResponse(json))
     }
     , [dispatch])
+
+
+  useEffect(() => {
+    if (auth) {
+      dispatch(replace(ROUTES.home))
+    }
+  }, [])
 
   return (
     <div className="container d-flex flex-column justify-content-md-center align-items-md-center"
