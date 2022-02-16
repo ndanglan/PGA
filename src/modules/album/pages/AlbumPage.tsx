@@ -3,17 +3,25 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
 import { Action } from 'typesafe-actions'
 import { API_PATHS } from '../../../config/api'
+import { IAlbum } from '../../../models/albumModel'
 import { AppState } from '../../../redux/reducer'
 import ListItem from '../components/ListItem'
-import { confirmTitle, resetTitle, setAlbum } from '../redux/albumReducer'
+import { activeChange, resetTitle, setAlbum } from '../redux/albumReducer'
 
-type Props = {}
+interface UpdatedList {
+  id: number,
+  title: string
+}
 
-const AlbumPage = (props: Props) => {
+const AlbumPage = () => {
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const albumObj = useSelector((state: AppState) => state.album)
+  const albumObj = useSelector((state: AppState) => state.album);
+  const [albums, setAlbums] = useState<IAlbum[]>(albumObj.albums);
+  const [listChangedAlbum, setListChangedAlbum] = useState<UpdatedList[]>([])
+  const [changed, setChanged] = useState(false);
+  const [reset, setReset] = useState(false);
 
   const fetchAlbum = useCallback(
     async () => {
@@ -24,7 +32,10 @@ const AlbumPage = (props: Props) => {
         const { album } = getState();
 
         if (album.albums.length > 0) {
-          return album.albums;
+          const newAlbums = [
+            ...album.albums
+          ]
+          return newAlbums
         }
 
         const res = await fetch(API_PATHS.album);
@@ -39,16 +50,65 @@ const AlbumPage = (props: Props) => {
       if (json?.length > 0) {
         const newJson = json.slice(0, 10)
         dispatch(setAlbum(newJson))
+        setAlbums(newJson)
         return;
       }
-
-      setErrorMessage("Can't load the data")
     }
-    , [dispatch])
+    , [dispatch]);
+
+  const onChange = useCallback((title: string, id: number) => {
+
+    setListChangedAlbum((prev) => {
+      const newArr = prev.slice(0);
+      const indexExist = prev.findIndex(item => item.id === id);
+
+      if (indexExist < 0) {
+        newArr.push({
+          id: id,
+          title: title
+        })
+      } else {
+        newArr[indexExist].title = title;
+      }
+      return newArr
+    })
+  }, []);
+
+  const onConfirm = (list: UpdatedList[]) => {
+    const newList = albums.map(album => {
+      const updatedAlbum = list.find(item => item.id === album.id);
+
+      if (updatedAlbum) {
+        return {
+          ...album,
+          title: updatedAlbum.title
+        }
+      }
+
+      return album
+    })
+
+
+
+    dispatch(setAlbum(newList))
+    setListChangedAlbum([]);
+  }
+
+  const onReset = () => {
+    setListChangedAlbum([]);
+    if (albumObj.changed) {
+      dispatch(resetTitle())
+    }
+  }
 
   useEffect(() => {
     fetchAlbum();
   }, [])
+
+  useEffect(() => {
+    console.log(listChangedAlbum);
+
+  }, [listChangedAlbum])
 
   return (
     <div className="container mx-auto mt-5 d-flex flex-column" style={{ maxWidth: '600px' }}>
@@ -56,11 +116,11 @@ const AlbumPage = (props: Props) => {
         <button
           type="button"
           className="btn btn-secondary"
-          disabled={albumObj.changed ? false : true}
           onClick={(e) => {
             e.preventDefault();
-            dispatch(confirmTitle())
+            onConfirm(listChangedAlbum)
           }}
+          disabled={listChangedAlbum.length !== 0 ? false : true}
         >
           Confirm
         </button>
@@ -68,7 +128,7 @@ const AlbumPage = (props: Props) => {
           type="button"
           className="btn btn-secondary"
           onClick={() => {
-            dispatch(resetTitle())
+            onReset()
           }}
         >
           Reset
@@ -77,9 +137,16 @@ const AlbumPage = (props: Props) => {
       <div className="d-flex flex-column gap-3">
         {loading && <div>Loading....</div>}
         {errorMessage && <div>{errorMessage}</div>}
-        {albumObj.albums && (
-          albumObj.albums.map((album) => (
-            <ListItem key={album.id} id={album.id} title={album.title} prevTitle={album.prevTitle} thumbnailUrl={album.thumbnailUrl} changed={true} />
+        {albums.length > 0 && (
+          albums.map((album) => (
+            <ListItem
+              key={album.id}
+              id={album.id}
+              title={album.title}
+              thumbnailUrl={album.thumbnailUrl}
+              changed={true}
+              onChange={onChange}
+            />
           ))
         )}
       </div>

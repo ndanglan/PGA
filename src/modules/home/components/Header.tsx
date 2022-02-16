@@ -56,7 +56,7 @@ const Header = (props: Props) => {
               dispatch(replace(ROUTES.login))
               dispatch(removeAuthorization())
             }}>
-              Logout
+              Đăng xuất
             </button>
           </div>
         </div>
