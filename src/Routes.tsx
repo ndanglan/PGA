@@ -20,7 +20,6 @@ const UserInfoPage = lazy(() => import('./modules/userinfo/pages/UserInfoPage'))
 const MainRoutes = () => {
   const location = useLocation();
   const auth = Cookies.get(ACCESS_TOKEN_KEY);
-  console.log(auth);
 
   return (
     <Suspense fallback={<div>Loading...</div>}>

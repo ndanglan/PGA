@@ -9,7 +9,6 @@ interface Props extends RouteProps { }
 const ProtectedRoute = (props: Props) => {
   const { ...rest } = props;
   const auth = Cookies.get(ACCESS_TOKEN_KEY);
-  console.log(rest);
 
   if (auth) {
     // OUtlet component = this.props.children

@@ -1,5 +1,4 @@
 import { push } from 'connected-react-router'
-import { isBuffer } from 'lodash'
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { useDispatch, useSelector } from 'react-redux'
@@ -39,7 +38,9 @@ const AlbumPage = () => {
 
       setLoading(false);
 
+      // check nếu state hiện tại chưa có albums thì lưu data mới 
       if (json.resData?.length > 0 && json.albums.length === 0) {
+        // lưu data trả về vào store theo 1 format mới có title và prevTitle
         const newJson = json.resData.map((item: IAlbum) => {
           return {
             ...item,
@@ -50,6 +51,7 @@ const AlbumPage = () => {
         setAlbums(newJson)
         return;
       }
+      // nếu đã có album thì nối thêm mảng mới load vào mảng trong store
       else if (json.albums.length !== 0) {
         const newJson = json.resData.map((item: IAlbum) => {
           return {
@@ -67,14 +69,17 @@ const AlbumPage = () => {
     , [dispatch]);
 
   const onChange = useCallback((title: string, id: number) => {
+    // mỗi thi value của 1 input thay đổi sẽ set lại state albums 
     setAlbums((prev: IAlbum[]) => {
       let check = false;
+      //  tạo 1 mảng mới là mảng có obj có title đã thay đổi 
       const newArr = prev.map(album => {
         if (album.id === id) {
           if (album.title !== title) {
             album.title = title;
           }
         }
+        // sau khi lưu được title mới thì check title với prevTitle( không bị lưu bằng title truyền vào) nếu có 1 cái khác nhau thì enable button còn tất cả giống nhau thì disable button confirm (state check để xác định trạng thái của button)
         if (album.title !== album.prevTitle) {
           check = true;
         }
@@ -88,6 +93,7 @@ const AlbumPage = () => {
   }, []);
 
   const onConfirm = (list: IAlbum[]) => {
+    // khi confirm truyền vào state albums hiện tại rồi chuyển hết prevTitle trong mỗi obj trong mảng thành title mới (nếu có)
     const newList = list.map(album => {
       if (album.prevTitle !== album.title) {
         album.prevTitle = album.title;
@@ -96,10 +102,12 @@ const AlbumPage = () => {
     })
 
     dispatch(setAlbum(newList))
+    // sau khi confirm thì button disable
     setChanged(false);
   }
 
   const onReset = (list: IAlbum[]) => {
+    // khi ấn reset chuyển hết title về prevTitle trước đó nếu title thay đổi 
     const newList = list.map(album => {
       if (album.prevTitle !== album.title && !!(album.prevTitle)) {
         album.title = album.prevTitle;
@@ -108,6 +116,7 @@ const AlbumPage = () => {
     })
 
     dispatch(setAlbum(newList))
+    // sau khi reset thì button disable
     setChanged(false);
   }
 
@@ -117,6 +126,7 @@ const AlbumPage = () => {
     }
     return ref.current.getBoundingClientRect().bottom <= window.innerHeight;
   }
+
   useEffect(() => {
     fetchAlbum(amount);
   }, [amount])
@@ -125,6 +135,7 @@ const AlbumPage = () => {
 
     const onScroll = () => {
       if (isBottom(contentRef)) {
+        // khi xác định được trạng thái ở bottom thì load thêm
         setAmount(prev => prev + 1)
       }
     }
@@ -132,13 +143,10 @@ const AlbumPage = () => {
     window.addEventListener('scroll', onScroll)
 
     return () => {
+      // sau khi useEffect gọi DomEvent thì clean
       window.removeEventListener('scroll', onScroll)
     }
   }, [])
-  useEffect(() => {
-    console.log(albums);
-
-  }, [albums])
 
   return (
     <div ref={contentRef} className="container mx-auto mt-5 d-flex flex-column" style={{ maxWidth: '600px' }}>
