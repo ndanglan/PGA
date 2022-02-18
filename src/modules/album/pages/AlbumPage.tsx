@@ -1,5 +1,5 @@
 import { push } from 'connected-react-router'
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { useDispatch, useSelector } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
@@ -12,12 +12,15 @@ import ListItem from '../components/ListItem'
 import { setAlbum, updateAlbum } from '../redux/albumReducer'
 
 const AlbumPage = () => {
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const albumObj = useSelector((state: AppState) => state.album);
-  const [albums, setAlbums] = useState<IAlbum[]>(albumObj.albums);
+
+  const { albums } = useSelector((state: AppState) => state.album);
+  const [albumsState, setAlbumsState] = useState<IAlbum[]>(albums);
   const [changed, setChanged] = useState(false);
+
   const contentRef = useRef<HTMLDivElement>(null);
   const [amount, setAmount] = useState(10);
 
@@ -41,83 +44,60 @@ const AlbumPage = () => {
       // check nếu state hiện tại chưa có albums thì lưu data mới 
       if (json.resData?.length > 0 && json.albums.length === 0) {
         // lưu data trả về vào store theo 1 format mới có title và prevTitle
-        const newJson = json.resData.map((item: IAlbum) => {
-          return {
-            ...item,
-            prevTitle: item.title
-          }
-        })
-        dispatch(setAlbum(newJson))
-        setAlbums(newJson)
+
+        dispatch(setAlbum(json.resData))
+        setAlbumsState(json.resData)
         return;
       }
       // nếu đã có album thì nối thêm mảng mới load vào mảng trong store
       else if (json.albums.length !== 0) {
-        const newJson = json.resData.map((item: IAlbum) => {
-          return {
-            ...item,
-            prevTitle: item.title
-          }
-        })
-        dispatch(updateAlbum(newJson));
-        setAlbums((prev) => ([
+        dispatch(updateAlbum(json.resData));
+        setAlbumsState((prev) => ([
           ...prev,
-          ...newJson
+          ...json.resData
         ]))
       }
     }
     , [dispatch]);
 
+  const checkChanged = (newList: IAlbum[], oldList: IAlbum[]) => {
+    let check = false
+    for (let i = 0; i < newList.length; i++) {
+      if (newList[i].title !== oldList[i].title) {
+        check = true;
+      }
+    }
+
+    setChanged(check);
+  }
+
   const onChange = useCallback((title: string, id: number) => {
     // mỗi thi value của 1 input thay đổi sẽ set lại state albums 
-    setAlbums((prev: IAlbum[]) => {
-      let check = false;
-      //  tạo 1 mảng mới là mảng có obj có title đã thay đổi 
-      const newArr = prev.map(album => {
-        if (album.id === id) {
-          if (album.title !== title) {
-            album.title = title;
-          }
-        }
-        // sau khi lưu được title mới thì check title với prevTitle( không bị lưu bằng title truyền vào) nếu có 1 cái khác nhau thì enable button còn tất cả giống nhau thì disable button confirm (state check để xác định trạng thái của button)
-        if (album.title !== album.prevTitle) {
-          check = true;
-        }
-        return album
-      });
-      setChanged(check);
-
-      return newArr;
+    setAlbumsState((prev: IAlbum[]) => {
+      const newArr = [...prev]
+      const indexDesired = newArr.findIndex(item => item.id === id);
+      // tạo 1 object reference mới để thay đổi cho cái cũ 
+      const newObj = {
+        ...newArr[indexDesired],
+        title: title
+      }
+      newArr[indexDesired] = newObj;
+      return newArr
     })
 
   }, []);
 
-  const onConfirm = (list: IAlbum[]) => {
-    // khi confirm truyền vào state albums hiện tại rồi chuyển hết prevTitle trong mỗi obj trong mảng thành title mới (nếu có)
-    const newList = list.map(album => {
-      if (album.prevTitle !== album.title) {
-        album.prevTitle = album.title;
-      }
-      return album
-    })
 
-    dispatch(setAlbum(newList))
-    // sau khi confirm thì button disable
-    setChanged(false);
+  const onConfirm = (list: IAlbum[]) => {
+    //dispatch lên redux albumsState là cái state mới 
+    dispatch(setAlbum(list))
+    setChanged(false)
   }
 
   const onReset = (list: IAlbum[]) => {
-    // khi ấn reset chuyển hết title về prevTitle trước đó nếu title thay đổi 
-    const newList = list.map(album => {
-      if (album.prevTitle !== album.title && !!(album.prevTitle)) {
-        album.title = album.prevTitle;
-      }
-      return album
-    })
-
-    dispatch(setAlbum(newList))
-    // sau khi reset thì button disable
-    setChanged(false);
+    // dispatch lên redux cái state cũ lấy từ redux đó là albums
+    setAlbumsState(list);
+    setChanged(false)
   }
 
   const isBottom = (ref: React.RefObject<HTMLDivElement>) => {
@@ -130,6 +110,11 @@ const AlbumPage = () => {
   useEffect(() => {
     fetchAlbum(amount);
   }, [amount])
+
+  useEffect(() => {
+    // check button mỗi khi có sự thay đổi ở 2 mảng 
+    checkChanged(albumsState, albums);
+  }, [albumsState, albums])
 
   useEffect(() => {
 
@@ -162,8 +147,9 @@ const AlbumPage = () => {
           className="btn btn-secondary"
           onClick={(e) => {
             e.preventDefault();
-            onConfirm(albums)
+            onConfirm(albumsState)
           }}
+          ref={buttonRef}
           disabled={changed ? false : true}
         >
           <FormattedMessage id="confirm" />
@@ -181,8 +167,8 @@ const AlbumPage = () => {
       <div className="d-flex flex-column gap-3">
         {loading && <div>Loading....</div>}
         {errorMessage && <div>{errorMessage}</div>}
-        {albums.length > 0 && (
-          albums.map((album, index) => (
+        {albumsState.length > 0 && (
+          albumsState.map((album, index) => (
             <ListItem
               key={index}
               id={album.id}
@@ -199,4 +185,4 @@ const AlbumPage = () => {
   )
 }
 
-export default memo(AlbumPage)
+export default AlbumPage
