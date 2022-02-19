@@ -15,6 +15,8 @@
   "gender": "Gender",
   "region": "Region",
   "state": "City",
+  "table": "Table Page",
+  "payrollList": "Payroll transaction list",
   "rememberMe": "Remember me",
   "accountAlready": "You have account already",
   "accountNotAlready": "You haven'had the account yet?",

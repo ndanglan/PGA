@@ -4,5 +4,6 @@ export const ROUTES = {
   login: '/login',
   register: '/register',
   album: '/album',
-  userInfo: '/user'
+  userInfo: '/user',
+  table: '/table'
 }

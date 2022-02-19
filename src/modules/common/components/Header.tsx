@@ -33,6 +33,11 @@ const Header = (props: Props) => {
                 <FormattedMessage id="userInfo" />
               </Link>
             </li>
+            <li className="nav-item">
+              <Link className="nav-link" to={ROUTES.table}>
+                <FormattedMessage id="table" />
+              </Link>
+            </li>
           </ul>
         </div>
         <div className="d-flex align-items-center ">

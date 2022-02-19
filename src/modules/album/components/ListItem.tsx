@@ -1,5 +1,5 @@
 import React, { useState, memo, useEffect } from 'react'
-import "../styles/ListItem.css"
+import '../../../scss/ListItem.scss'
 
 interface Props {
   id: number,
