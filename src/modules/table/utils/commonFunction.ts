@@ -1,4 +1,13 @@
+import moment from "moment"
 import { FULFILLED_CODE, PROCESSING_CODE, RECEIVED_CODE, PENDING_CODE } from "./constants"
+
+export const formatTime = (time: string) => {
+  return moment(time).format('DD MMM YY');
+}
+
+export const convertToTime = (time: string) => {
+  return moment(time).toDate().getTime()
+}
 
 export const checkColor = (status: string) => {
   if (status === FULFILLED_CODE) {

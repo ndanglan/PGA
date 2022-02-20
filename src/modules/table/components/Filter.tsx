@@ -4,8 +4,6 @@ import DatePicker from 'react-datepicker';
 import '../../../scss/table/table.scss'
 import { useSelector } from 'react-redux';
 import { AppState } from '../../../redux/reducer';
-import moment from 'moment';
-
 interface Props {
   updatedFilter(type: string, values?: string, dateFrom?: number, dateTo?: number): void
 }
@@ -21,7 +19,7 @@ const Filter = (props: Props) => {
   const { data } = useSelector((state: AppState) => state.table);
 
   // filter by serverside
-  const [formValues, setFormValues] = useState<{ status: string, client: string, from: string, to: string }>();
+  // const [formValues, setFormValues] = useState<{ status: string, client: string, from: string, to: string }>();
 
   const takeFieldArr = useCallback((key: string) => {
     const arr: string[] = [];
@@ -54,7 +52,7 @@ const Filter = (props: Props) => {
         {key}
       </option>,
     )
-    keyArr.map((item, index) => {
+    keyArr.map((item) => {
       renderArr.push(
         <option value={item} key={item}>{item}</option>
       )
@@ -68,6 +66,7 @@ const Filter = (props: Props) => {
       props.updatedFilter('date', '', date.from?.getTime(), date.to?.getTime())
     }
   }, [date])
+
   return (
     <div className="mt-3 d-flex justify-content-between
     ">
@@ -111,8 +110,6 @@ const Filter = (props: Props) => {
             minDate={date.from}
             selected={date.to}
             onChange={(date) => {
-              console.log(date?.getTime());
-
               setDate((prev) => {
                 return {
                   ...prev,

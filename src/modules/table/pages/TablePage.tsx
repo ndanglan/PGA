@@ -11,8 +11,7 @@ import { LIST_PAYROLL } from '../../../assets/data/mock_data';
 import { filterProps, ITableData } from '../../../models/tableModel'
 import ConfirmPopup from '../components/ConfirmPopup'
 import ModalEdit from '../components/ModalEdit'
-import moment from 'moment'
-import { checkStatus, filterArray } from '../utils/commonFunction'
+import { checkStatus, convertToTime, filterArray, formatTime } from '../utils/commonFunction'
 
 const mockNameClient = [
   'Yopmall',
@@ -85,7 +84,7 @@ const TablePage = () => {
   //   }, [])
 
   // update filter 
-  const updatedFilter = (type: string, values?: string, dateFrom?: number, dateTo?: number) => {
+  const updatedFilter = useCallback((type: string, values?: string, dateFrom?: number, dateTo?: number) => {
     if (type === 'status') {
       setFilters((prev: filterProps) => {
         return {
@@ -122,14 +121,14 @@ const TablePage = () => {
             ...prev.keys,
             date: (test: string) => {
               if (dateFrom && dateTo) {
-                return moment(test).toDate().getTime() >= dateFrom && moment(test).toDate().getTime() <= dateTo
+                return convertToTime(test) >= dateFrom && convertToTime(test) <= dateTo
               }
             }
           }
         }
       })
     }
-  }
+  }, [])
 
   // confirm function 
   const onConfirm = (id: string, values?: ITableData) => {
@@ -188,7 +187,7 @@ const TablePage = () => {
   const fetchData = useCallback(() => {
     const newArr = LIST_PAYROLL.payrolls.map((item) => {
       return {
-        date: moment(item.time_created).format('DD MMM YY'),
+        date: formatTime(item.time_created),
         status: checkStatus(item.date_processed, item.date_fulfilled, item.date_received),
         clientID: mockNameClient[Math.floor(Math.random() * mockNameClient.length)],
         invoice: item.payroll_id,
