@@ -1,9 +1,14 @@
 import React, { memo } from 'react'
 import { FormattedMessage } from 'react-intl'
+import { filterProps } from '../../../models/tableModel'
 import Button from '../../common/components/Button'
+import { IFilters } from '../utils/commonFunction'
 import Filter from './Filter'
+interface Props {
+  updatedFilter(type: string, values?: string, dateFrom?: number, dateTo?: number): void
+}
 
-const TableHeader = (props: any) => {
+const TableHeader = (props: Props) => {
   return (
     <div>
       {/* Title and export csv */}
@@ -19,7 +24,7 @@ const TableHeader = (props: any) => {
       </div>
       {/* filter */}
       <div>
-        <Filter />
+        <Filter updatedFilter={props.updatedFilter} />
       </div>
     </div>
   )

@@ -14,14 +14,9 @@ type Props = {
     }
   }): void,
   onEdit(obj: {
-    show: boolean, content: {
-      date: string,
-      total: string,
-      currency: string,
-      invoice: string,
-      clientID: string,
-      status: string
-    }, id: string
+    show: boolean,
+    title: string,
+    id: string
   }): void
 }
 
@@ -48,14 +43,7 @@ const DataRow = (props: Props) => {
           handleClick={() => {
             onEdit({
               show: true,
-              content: {
-                date: item.date,
-                total: item.total,
-                currency: item.currency,
-                invoice: item.invoice,
-                clientID: item.clientID,
-                status: item.status
-              },
+              title: 'Chi tiết giao dịch',
               id: item.invoice
             })
           }}

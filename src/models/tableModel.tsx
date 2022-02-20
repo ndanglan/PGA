@@ -6,3 +6,11 @@ export interface ITableData {
   clientID: string,
   status: string
 }
+
+export interface filterProps {
+  active: boolean,
+  keys: {
+    // status?: (value: any) => boolean,
+    // client?: (value: any) => boolean,
+  }
+}

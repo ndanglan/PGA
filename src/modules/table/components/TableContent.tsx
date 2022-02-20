@@ -15,14 +15,9 @@ type Props = {
     }
   }): void,
   onEdit(obj: {
-    show: boolean, content: {
-      date: string,
-      total: string,
-      currency: string,
-      invoice: string,
-      clientID: string,
-      status: string
-    }, id: string
+    show: boolean,
+    title: string,
+    id: string
   }): void
 }
 
