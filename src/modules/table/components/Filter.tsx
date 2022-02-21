@@ -38,6 +38,7 @@ const Filter = (props: Props) => {
     to: null
   });
 
+  // load các status hoặc client có trong data
   const takeFieldArr = useCallback((key: string) => {
     const arr: string[] = [];
     // lấy key 
@@ -60,6 +61,7 @@ const Filter = (props: Props) => {
     return arr
   }, [data])
 
+  // render ra các option
   const renderFilter = (key: string) => {
     const keyArr = takeFieldArr(key);
     const renderArr: JSX.Element[] = []
@@ -81,6 +83,7 @@ const Filter = (props: Props) => {
   }
 
   useEffect(() => {
+    // nếu cả date from và date to được chọn thì mới update filter vào hàm filter
     if (date.from && date.to) {
       props.updatedFilter('date', '', date.from?.getTime(), date.to?.getTime())
     }

@@ -5,7 +5,6 @@ import { ITableData, sortingProps } from '../../../models/tableModel'
 import '../../../scss/table/table.scss'
 import DataRow from './DataRow'
 
-
 type Props = {
   data?: ITableData[],
   currentPages: number,
@@ -22,7 +21,11 @@ type Props = {
     title: string,
     id: string
   }): void,
-  updatedFilter(type: string, values?: string, dateFrom?: number, dateTo?: number): void,
+  updatedFilter(
+    type: string,
+    values?: string,
+    dateFrom?: number,
+    dateTo?: number): void,
   onSorting: React.Dispatch<React.SetStateAction<sortingProps>>
 }
 
@@ -64,6 +67,7 @@ const TableContent = (props: Props) => {
                   <Dropdown.Item
                     eventKey="ascending"
                     onClick={() => {
+                      // ấn thì thay đổi state sorting 
                       onSorting(prev => ({
                         ...prev,
                         type: 'ascending',
@@ -76,6 +80,7 @@ const TableContent = (props: Props) => {
                   </Dropdown.Item>
                   <Dropdown.Item eventKey="descending"
                     onClick={() => {
+                      // ấn thì thay đổi state sorting 
                       onSorting(prev => ({
                         ...prev,
                         type: 'descending',

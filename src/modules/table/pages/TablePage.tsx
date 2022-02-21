@@ -176,7 +176,6 @@ const TablePage = () => {
       })
     }
 
-
     // clear các filters
     if (type === 'reset') {
       setFilters({
@@ -205,7 +204,7 @@ const TablePage = () => {
   const resetData = () => {
     updatedFilter('reset');
     setSortings({
-      active: false,
+      active: true,
       type: 'reset',
       key: ''
     })
@@ -213,13 +212,19 @@ const TablePage = () => {
 
   // confirm function 
   const onConfirm = (id: string, values?: ITableData) => {
+    // nếu values truyền vào không có id của đơn hàng thì xóa 
     if (!values?.invoice) {
-
-      const newArr = data.filter((item: ITableData) => {
+      // tạo mảng mới sau khi xóa
+      let newArr = data.filter((item: ITableData) => {
         return item.invoice !== id
       })
-
+      // truyền lên redux
       dispatch(setTableData(newArr))
+      // sau khi truyền mảng mới vào redux thì xét xem có đang ở trạng thái filter nào không nếu có thì filter rồi mới set vào state mới
+      if (Object.keys(filters.filters).length > 0) {
+        newArr = handleFilter(newArr, filters)
+      }
+
       setValueTable(newArr);
 
       setShowModalConfirm({
@@ -239,12 +244,18 @@ const TablePage = () => {
       })
       return;
     }
-
+    // tìm đến chỉ số của đối tượng có trùng id 
     const existIndex = data.findIndex(item => item.invoice === id);
+    // xét lại với mảng mới
     data[existIndex] = { ...values };
-    const newArr = [...data]
+    let newArr = [...data]
+    // truyền vào store
+    dispatch(setTableData(newArr));
+    // nếu đang filter thì filter rồi mới xét lại vào state
+    if (Object.keys(filters.filters).length > 0) {
+      newArr = handleFilter(newArr, filters)
+    }
 
-    dispatch(setTableData(newArr))
     setValueTable(newArr);
 
     setShowModalConfirm({
@@ -288,22 +299,36 @@ const TablePage = () => {
 
   useEffect(() => {
 
-    if (Object.keys(filters.filters).length !== 0) {
+    if (Object.keys(filters.filters).length !== 0 && filters.active) {
+      // khi filters state thay đổi được gọi active và có hàm trong filters.filters thì filters data trong store rồi xét vào state ở ngoài để hiện thị 
       const newArr = handleFilter(data, filters)
       setValueTable(newArr)
-      if (Math.ceil(newArr.length / 10) >= currentPage) {
-        setCurrentPage(currentPage);
-      } else {
-        setCurrentPage(1);
-      }
-    } else if (Object.keys(filters.filters).length === 0) {
+      //  khi filters thay đổi ( thêm cái filter mới thì sẽ quay lại trang đầu tiên)
+      setCurrentPage(1);
+      // sau khi xét filter xong thì cho active bằng false
+      setFilters((prev: filterProps) => {
+        return {
+          ...prev,
+          active: false
+        }
+      })
+    } else if (Object.keys(filters.filters).length === 0 && filters.active) {
+      // khi ấn clear thì đã có length bằng 0 và active được cho bằng true thì reset lại data đang ở trong store
       setValueTable(data)
       setCurrentPage(1);
+      // sau khi xét xong thì active lai bằng false
+      setFilters((prev: filterProps) => {
+        return {
+          ...prev,
+          active: false
+        }
+      })
     }
   }, [filters, data])
 
   useEffect(() => {
     if (sortings.active && sortings.type === 'ascending') {
+      // khi sorting được active và type = ascending thì sort state đang hiển thị 
 
       const newArr = handleSortingAscending(valueTable, sortings.key);
 
@@ -312,7 +337,7 @@ const TablePage = () => {
     }
 
     if (sortings.active && sortings.type === 'descending') {
-
+      // tương tự với descen
       const newArr = handleSortingDescending(valueTable, sortings.key)
       setValueTable([...newArr])
       return;
