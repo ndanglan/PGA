@@ -1,12 +1,22 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { forwardRef, useCallback, useEffect, useState } from 'react'
 import Button from '../../common/components/Button';
 import DatePicker from 'react-datepicker';
 import '../../../scss/table/table.scss'
 import { useSelector } from 'react-redux';
 import { AppState } from '../../../redux/reducer';
 interface Props {
-  updatedFilter(type: string, values?: string, dateFrom?: number, dateTo?: number): void
+  updatedFilter(type: string, values?: string, dateFrom?: number, dateTo?: number): void,
+  resetData(): void,
 }
+
+const CustomInput = forwardRef(function DateInput(props: any, ref: any) {
+  return (
+    <div>
+      <input {...props} ref={ref} />
+      <i className="fa-solid fa-calendar-days"></i>
+    </div>
+  )
+})
 
 const Filter = (props: Props) => {
   const [date, setDate] = useState<{
@@ -19,7 +29,12 @@ const Filter = (props: Props) => {
   const { data } = useSelector((state: AppState) => state.table);
 
   // filter by serverside
-  // const [formValues, setFormValues] = useState<{ status: string, client: string, from: string, to: string }>();
+  const [formValues, setFormValues] = useState<{ status: string, client: string, from: Date | null, to: Date | null }>({
+    status: '',
+    client: '',
+    from: null,
+    to: null
+  });
 
   const takeFieldArr = useCallback((key: string) => {
     const arr: string[] = [];
@@ -39,16 +54,17 @@ const Filter = (props: Props) => {
           }
         })
     }
+
     return arr
   }, [data])
 
-  const renderFilter = useCallback((key: string) => {
+  const renderFilter = (key: string) => {
     const keyArr = takeFieldArr(key);
     const renderArr: JSX.Element[] = []
 
     // render ra jsx
     renderArr.push(
-      <option value={''} className="text-capitalize">
+      <option value={''} className="text-capitalize" key={0}>
         {key}
       </option>,
     )
@@ -59,7 +75,7 @@ const Filter = (props: Props) => {
     })
 
     return renderArr;
-  }, [takeFieldArr])
+  }
 
   useEffect(() => {
     if (date.from && date.to) {
@@ -76,6 +92,10 @@ const Filter = (props: Props) => {
           className="form-select"
           style={{ maxWidth: "100px", color: '#888' }}
           onChange={(e) => {
+            setFormValues((prev) => ({
+              ...prev,
+              status: e.target.value
+            }))
             props.updatedFilter('status', e.target.value);
           }}
         >
@@ -85,6 +105,10 @@ const Filter = (props: Props) => {
         {/* Client */}
         <select className="form-select" style={{ maxWidth: "100px", color: '#888' }}
           onChange={(e) => {
+            setFormValues((prev) => ({
+              ...prev,
+              client: e.target.value
+            }))
             props.updatedFilter('clientID', e.target.value);
           }}
         >
@@ -102,7 +126,9 @@ const Filter = (props: Props) => {
                   from: date
                 }
               })
-            }} />
+            }}
+            customInput={<CustomInput />}
+          />
         </div>
         <div>
           <DatePicker
@@ -118,6 +144,7 @@ const Filter = (props: Props) => {
               })
             }}
             placeholderText="To"
+            customInput={<CustomInput />}
           />
         </div>
 
@@ -135,7 +162,15 @@ const Filter = (props: Props) => {
         <Button styles={{
           border: "2px solid #b80e52",
           color: "#b80e52"
-        }} content="Clear" />
+        }} content="Clear" handleClick={() => {
+          setFormValues({
+            status: '',
+            client: '',
+            from: null,
+            to: null
+          })
+          props.resetData()
+        }} />
       </div>
     </div>
   )

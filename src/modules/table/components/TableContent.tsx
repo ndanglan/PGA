@@ -1,11 +1,13 @@
 import React, { memo } from 'react'
-import { ITableData } from '../../../models/tableModel'
+import { Dropdown } from 'react-bootstrap'
+import { ITableData, sortingProps } from '../../../models/tableModel'
 import '../../../scss/table/table.scss'
 import DataRow from './DataRow'
 
 
 type Props = {
   data?: ITableData[],
+  pages: number,
   onDelete(values: {
     show: boolean,
     content: string,
@@ -18,12 +20,31 @@ type Props = {
     show: boolean,
     title: string,
     id: string
-  }): void
+  }): void,
+  updatedFilter(type: string, values?: string, dateFrom?: number, dateTo?: number): void,
+  onSorting: React.Dispatch<React.SetStateAction<sortingProps>>
 }
+
+const CustomToggle = React.forwardRef(function customToggle(props: any, ref: any) {
+  return (
+    <>
+      <p
+        {...props}
+        href="#_"
+        ref={ref}
+        className="m-0 text-decoration-none"
+        style={{ color: '#29506f' }}
+      >
+        {props.children}
+      </p>
+      <i className="fa-solid fa-caret-down d-flex align-items-center ms-2"></i>
+    </>
+  )
+});
 
 const TableContent = (props: Props) => {
 
-  const { data, onDelete, onEdit } = props;
+  const { data, onDelete, onEdit, pages, onSorting } = props;
 
   return (
     <div className="mt-3">
@@ -31,17 +52,83 @@ const TableContent = (props: Props) => {
         <thead>
           <tr style={{ border: 'none' }}>
             <th scope="col" style={{ color: "#29506f" }}>Status</th>
-            <th scope="col" style={{ color: "#29506f" }}>Date</th>
+            <th scope="col" style={{ color: "#29506f" }} className="d-flex align-items-center justify-content-start">
+              <Dropdown className="d-flex" style={{ cursor: 'pointer' }}>
+                <Dropdown.Toggle as={CustomToggle} id="dropdown">
+                  Date
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item
+                    eventKey="ascending"
+                    onClick={() => {
+                      onSorting(prev => ({
+                        ...prev,
+                        type: 'ascending',
+                        key: 'date',
+                        active: true
+                      }))
+                    }}
+                  >
+                    Ascending
+                  </Dropdown.Item>
+                  <Dropdown.Item eventKey="descending"
+                    onClick={() => {
+                      onSorting(prev => ({
+                        ...prev,
+                        type: 'descending',
+                        key: 'date',
+                        active: true
+                      }))
+                    }}>
+                    Descending
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </th>
             <th scope="col" style={{ color: "#29506f" }}>Client</th>
             <th scope="col" style={{ color: "#29506f" }}>Currency</th>
-            <th scope="col" style={{ color: "#29506f" }}>Total</th>
+            <th scope="col" style={{ color: "#29506f" }} className="d-flex align-items-center justify-content-start">
+              <Dropdown className="d-flex" style={{ cursor: 'pointer' }}>
+                <Dropdown.Toggle as={CustomToggle} id="dropdown">
+                  Total
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item eventKey="ascending"
+                    onClick={() => {
+                      onSorting(prev => ({
+                        ...prev,
+                        type: 'ascending',
+                        key: 'total',
+                        active: true
+                      }))
+                    }}>
+                    Ascending
+                  </Dropdown.Item>
+                  <Dropdown.Item eventKey="descending"
+                    onClick={() => {
+                      onSorting(prev => ({
+                        ...prev,
+                        type: 'descending',
+                        key: 'total',
+                        active: true
+                      }))
+                    }}>
+                    Descending
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </th>
             <th scope="col" style={{ color: "#29506f" }}>Invoice #</th>
           </tr>
         </thead>
         <tbody className="gap-3">
-          {data?.map((item) => (
-            <DataRow key={item.invoice} item={item} onEdit={onEdit} onDelete={onDelete} />
-          ))}
+          {data?.map((item, index) => {
+            if (index >= (pages - 1) * 10 && index < pages * 10) {
+              return (
+                <DataRow key={item.invoice} item={item} onEdit={onEdit} onDelete={onDelete} />
+              )
+            }
+          })}
         </tbody>
       </table>
     </div>

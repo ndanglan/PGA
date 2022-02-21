@@ -2,6 +2,8 @@ import React, { memo } from 'react'
 import { ITableData } from '../../../models/tableModel'
 import Button from '../../common/components/Button'
 import { checkColor } from '../utils/commonFunction'
+import CurrencyFormat from 'react-currency-format';
+import { FormattedNumber } from 'react-intl';
 
 type Props = {
   item: ITableData,
@@ -30,7 +32,9 @@ const DataRow = (props: Props) => {
       <td>{item.date}</td>
       <td>{item.clientID}</td>
       <td>{item.currency}</td>
-      <td>{item.total}</td>
+      <td>
+        <FormattedNumber value={+item.total} minimumFractionDigits={2} />
+      </td>
       <td>{item.invoice} {Date.now()}</td>
       <td>
         <Button

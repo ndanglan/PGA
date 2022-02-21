@@ -1,20 +1,33 @@
 form{
   .react-datepicker-wrapper{
     max-width: 120px;
-    .filter-field{
-      width: 120px;
-      color: rgb(136,136,136);
-      display: block;
-      padding: 0.375rem 0.75rem 0.375rem 0.75rem;
-      font-size: 1rem;
-      font-weight: 400;
-      line-height: 1.5;
-      background:#fff;
-      margin: 0;
-      display: inline;
-      border-radius: 0.25rem;
-      border: 1px solid #ced4da;
-      outline: none;
+
+    & div{
+      position: relative;
+
+      & .filter-field{
+        width: 120px;
+        color: rgb(136,136,136);
+        display: block;
+        padding: 0.375rem 0.75rem 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        background:#fff;
+        margin: 0;
+        display: inline;
+        border-radius: 0.25rem;
+        border: 1px solid #ced4da;
+        outline: none;
+      }
+      
+      & i{
+        color: #29506f;
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+      }
     }
   }
 }

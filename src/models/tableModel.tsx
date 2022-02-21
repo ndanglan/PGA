@@ -9,8 +9,14 @@ export interface ITableData {
 
 export interface filterProps {
   active: boolean,
-  keys: {
+  filters: {
     // status?: (value: any) => boolean,
     // client?: (value: any) => boolean,
-  }
+  },
+}
+
+export interface sortingProps {
+  active: boolean,
+  type: string,
+  key: string
 }

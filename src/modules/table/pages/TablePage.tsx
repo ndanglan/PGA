@@ -8,10 +8,11 @@ import TableContent from '../components/TableContent'
 import TableHeader from '../components/TableHeader'
 import { setTableData } from '../redux/tableReducer'
 import { LIST_PAYROLL } from '../../../assets/data/mock_data';
-import { filterProps, ITableData } from '../../../models/tableModel'
+import { filterProps, ITableData, sortingProps } from '../../../models/tableModel'
 import ConfirmPopup from '../components/ConfirmPopup'
 import ModalEdit from '../components/ModalEdit'
 import { checkStatus, convertToTime, filterArray, formatTime } from '../utils/commonFunction'
+import TableFooter from '../components/TableFooter'
 
 const mockNameClient = [
   'Yopmall',
@@ -24,14 +25,25 @@ const mockNameClient = [
 
 const TablePage = () => {
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
-  // const [loading, setLoading] = useState(false);
+  // lấy data từ store 
   const { data } = useSelector((state: AppState) => state.table)
+  // state của data cho vào table
   const [valueTable, setValueTable] = useState<ITableData[]>(data);
+  // state của trang hiện tại trang 1 , trang 2, trang 3
+  const [pages, setPages] = useState<number>(1);
+  // state để filters data propertises filters chứa các hàm để filter 
   const [filters, setFilters] = useState<filterProps>({
     active: false,
-    keys: {
+    filters: {
     }
+  });
+  // state để sorting data type là kiểu ascen hoặc descen, key là sorting theo cái props nào  ( date, total)
+  const [sortings, setSortings] = useState<sortingProps>({
+    active: false,
+    type: '',
+    key: ''
   })
+  // state để mở confirm modal payload dùng khi confirm sau khi edit
   const [showModalConfirm, setShowModalConfirm] = useState<{
     show: boolean,
     content: string,
@@ -54,6 +66,7 @@ const TablePage = () => {
       }
     },
   });
+  // state để mở edit modal 
   const [showModalEdit, setShowModalEdit] = useState<{
     show: boolean,
     title: string,
@@ -83,15 +96,52 @@ const TablePage = () => {
   //     }
   //   }, [])
 
+  // sorting 
+  // xử lí sort ascen theo date hoặc total 
+  const handleSortingAscending = (data: ITableData[], key: string) => {
+    let newArr = [];
+    if (key === 'date') {
+      newArr = data.sort((a, b) => convertToTime(a.date) - convertToTime(b.date));
+      console.log('ascending', newArr);
+      return newArr;
+    }
+
+    if (key === 'total') {
+      newArr = data.sort((a, b) => (+a.total) - (+b.total))
+      return newArr;
+    }
+
+    return data
+  }
+
+  // xử lí sort descen theo date hoặc total 
+  const handleSortingDescending = (data: ITableData[], key: string) => {
+    let newArr = [];
+    if (key === 'date') {
+      newArr = data.sort((a, b) => convertToTime(b.date) - convertToTime(a.date));
+      console.log('descending', newArr);
+
+      return newArr;
+    }
+
+    if (key === 'total') {
+      newArr = data.sort((a, b) => (+b.total) - (+a.total))
+      return newArr;
+    }
+
+    return data
+  }
+
   // update filter 
+  // xét hàm vào filters để filter bằng các hàm đó 
   const updatedFilter = useCallback((type: string, values?: string, dateFrom?: number, dateTo?: number) => {
     if (type === 'status') {
       setFilters((prev: filterProps) => {
         return {
           ...prev,
           active: true,
-          keys: {
-            ...prev.keys,
+          filters: {
+            ...prev.filters,
             status: (test: string) => test === values
           }
         }
@@ -104,8 +154,8 @@ const TablePage = () => {
         return {
           ...prev,
           active: true,
-          keys: {
-            ...prev.keys,
+          filters: {
+            ...prev.filters,
             clientID: (test: string) => test === values
           }
         }
@@ -117,8 +167,8 @@ const TablePage = () => {
         return {
           ...prev,
           active: true,
-          keys: {
-            ...prev.keys,
+          filters: {
+            ...prev.filters,
             date: (test: string) => {
               if (dateFrom && dateTo) {
                 return convertToTime(test) >= dateFrom && convertToTime(test) <= dateTo
@@ -128,7 +178,41 @@ const TablePage = () => {
         }
       })
     }
+
+
+    // clear các filters
+    if (type === 'reset') {
+      setFilters({
+        active: true,
+        filters: {},
+      })
+    }
+
   }, [])
+
+  const handleFilter = (data: ITableData[], filters: filterProps) => {
+    const newArr = filterArray(data, filters.filters).map(item => {
+      return {
+        date: item['date'],
+        total: item['total'],
+        currency: item['currency'],
+        invoice: item['invoice'],
+        clientID: item['clientID'],
+        status: item['status'],
+      }
+    })
+    return newArr;
+  }
+
+  // reset filters
+  const resetData = () => {
+    updatedFilter('reset');
+    setSortings({
+      active: false,
+      type: 'reset',
+      key: ''
+    })
+  }
 
   // confirm function 
   const onConfirm = (id: string, values?: ITableData) => {
@@ -192,11 +276,13 @@ const TablePage = () => {
         clientID: mockNameClient[Math.floor(Math.random() * mockNameClient.length)],
         invoice: item.payroll_id,
         currency: item.currency,
-        total: item.volume_input_in_input_currency.toString()
+        total: (item.volume_input_in_input_currency + item.fees).toString()
       }
     })
+
     dispatch(setTableData(newArr))
     setValueTable(newArr)
+
   }, [dispatch])
 
   useEffect(() => {
@@ -204,28 +290,52 @@ const TablePage = () => {
   }, [fetchData])
 
   useEffect(() => {
-    if (filters.active) {
-      const newArr = filterArray(data, filters.keys).map(item => {
-        return {
-          date: item['date'],
-          total: item['total'],
-          currency: item['currency'],
-          invoice: item['invoice'],
-          clientID: item['clientID'],
-          status: item['status'],
-        }
-      })
 
+    if (Object.keys(filters.filters).length !== 0) {
+      const newArr = handleFilter(data, filters)
       setValueTable(newArr)
+      setPages(1);
+    } else if (Object.keys(filters.filters).length === 0) {
+      setValueTable(data)
+      setPages(1);
     }
   }, [filters, data])
 
+  useEffect(() => {
+    if (sortings.active && sortings.type === 'ascending') {
+
+      const newArr = handleSortingAscending(valueTable, sortings.key);
+
+      setValueTable([...newArr])
+      return;
+    }
+
+    if (sortings.active && sortings.type === 'descending') {
+
+      const newArr = handleSortingDescending(valueTable, sortings.key)
+      setValueTable([...newArr])
+      return;
+    }
+
+    if (sortings.type === 'reset') {
+      setValueTable(data);
+    }
+  }, [sortings.key, sortings.type])
+
   return (
     <>
-      <div style={{ width: '100vw', backgroundColor: '#f6f7fb' }}>
+      <div style={{ backgroundColor: '#f6f7fb' }}>
         <div className="container p-3">
-          <TableHeader updatedFilter={updatedFilter} />
-          <TableContent data={valueTable} onDelete={setShowModalConfirm} onEdit={setShowModalEdit} />
+          <TableHeader updatedFilter={updatedFilter} resetData={resetData} />
+          <TableContent
+            data={valueTable}
+            pages={pages}
+            onDelete={setShowModalConfirm}
+            onEdit={setShowModalEdit}
+            updatedFilter={updatedFilter}
+            onSorting={setSortings}
+          />
+          <TableFooter numberOfData={valueTable.length} setPages={setPages} pages={pages} />
         </div>
       </div>
       {showModalEdit.show && (

@@ -30,13 +30,13 @@ export default function reducer(state: AuthState = {}, action: Action) {
   switch (action.type) {
     case getType(setAuthorization):
       // hàm getType trong typesafe-actions để lấy type trong object trả về của hàm createCustomAction
-
       return { ...state, auth: action.data };
     case getType(setUserInfo):
       return { ...state, user: action.data };
     case getType(removeAuthorization): {
       return {
         ...state,
+        auth: {},
         user: {}
       }
     }

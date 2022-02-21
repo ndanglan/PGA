@@ -5,7 +5,8 @@ import Button from '../../common/components/Button'
 import { IFilters } from '../utils/commonFunction'
 import Filter from './Filter'
 interface Props {
-  updatedFilter(type: string, values?: string, dateFrom?: number, dateTo?: number): void
+  updatedFilter(type: string, values?: string, dateFrom?: number, dateTo?: number): void,
+  resetData(): void
 }
 
 const TableHeader = (props: Props) => {
@@ -24,7 +25,7 @@ const TableHeader = (props: Props) => {
       </div>
       {/* filter */}
       <div>
-        <Filter updatedFilter={props.updatedFilter} />
+        <Filter updatedFilter={props.updatedFilter} resetData={props.resetData} />
       </div>
     </div>
   )
