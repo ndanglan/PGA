@@ -7,7 +7,7 @@ import DataRow from './DataRow'
 
 type Props = {
   data?: ITableData[],
-  pages: number,
+  currentPages: number,
   onDelete(values: {
     show: boolean,
     content: string,
@@ -44,7 +44,7 @@ const CustomToggle = React.forwardRef(function customToggle(props: any, ref: any
 
 const TableContent = (props: Props) => {
 
-  const { data, onDelete, onEdit, pages, onSorting } = props;
+  const { data, onDelete, onEdit, currentPages, onSorting } = props;
 
   return (
     <div className="mt-3">
@@ -123,7 +123,7 @@ const TableContent = (props: Props) => {
         </thead>
         <tbody className="gap-3">
           {data?.map((item, index) => {
-            if (index >= (pages - 1) * 10 && index < pages * 10) {
+            if (index >= (currentPages - 1) * 10 && index < currentPages * 10) {
               return (
                 <DataRow key={item.invoice} item={item} onEdit={onEdit} onDelete={onDelete} />
               )

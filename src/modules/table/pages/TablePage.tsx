@@ -29,8 +29,8 @@ const TablePage = () => {
   const { data } = useSelector((state: AppState) => state.table)
   // state của data cho vào table
   const [valueTable, setValueTable] = useState<ITableData[]>(data);
-  // state của trang hiện tại trang 1 , trang 2, trang 3
-  const [pages, setPages] = useState<number>(1);
+  // state current page 
+  const [currentPage, setCurrentPage] = useState<number>(1);
   // state để filters data propertises filters chứa các hàm để filter 
   const [filters, setFilters] = useState<filterProps>({
     active: false,
@@ -102,7 +102,6 @@ const TablePage = () => {
     let newArr = [];
     if (key === 'date') {
       newArr = data.sort((a, b) => convertToTime(a.date) - convertToTime(b.date));
-      console.log('ascending', newArr);
       return newArr;
     }
 
@@ -119,8 +118,6 @@ const TablePage = () => {
     let newArr = [];
     if (key === 'date') {
       newArr = data.sort((a, b) => convertToTime(b.date) - convertToTime(a.date));
-      console.log('descending', newArr);
-
       return newArr;
     }
 
@@ -282,7 +279,7 @@ const TablePage = () => {
 
     dispatch(setTableData(newArr))
     setValueTable(newArr)
-
+    // setPages(Math.ceil(newArr.length/10));
   }, [dispatch])
 
   useEffect(() => {
@@ -294,10 +291,14 @@ const TablePage = () => {
     if (Object.keys(filters.filters).length !== 0) {
       const newArr = handleFilter(data, filters)
       setValueTable(newArr)
-      setPages(1);
+      if (Math.ceil(newArr.length / 10) >= currentPage) {
+        setCurrentPage(currentPage);
+      } else {
+        setCurrentPage(1);
+      }
     } else if (Object.keys(filters.filters).length === 0) {
       setValueTable(data)
-      setPages(1);
+      setCurrentPage(1);
     }
   }, [filters, data])
 
@@ -329,13 +330,13 @@ const TablePage = () => {
           <TableHeader updatedFilter={updatedFilter} resetData={resetData} />
           <TableContent
             data={valueTable}
-            pages={pages}
+            currentPages={currentPage}
             onDelete={setShowModalConfirm}
             onEdit={setShowModalEdit}
             updatedFilter={updatedFilter}
             onSorting={setSortings}
           />
-          <TableFooter numberOfData={valueTable.length} setPages={setPages} pages={pages} />
+          <TableFooter numberOfData={valueTable.length} setCurrentPage={setCurrentPage} currentPage={currentPage} />
         </div>
       </div>
       {showModalEdit.show && (

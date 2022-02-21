@@ -3,12 +3,12 @@ import { Pagination } from 'react-bootstrap'
 
 type Props = {
   numberOfData: number,
-  setPages: React.Dispatch<React.SetStateAction<number>>,
-  pages: number
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>,
+  currentPage: number
 }
 
 const TableFooter = (props: Props) => {
-  const { numberOfData, setPages, pages } = props;
+  const { numberOfData, setCurrentPage, currentPage } = props;
   const [pageItems, setPageItems] = useState<JSX.Element[]>();
 
   const showingData = useCallback(() => {
@@ -16,7 +16,7 @@ const TableFooter = (props: Props) => {
     const remainer = numberOfData % 10;
 
     if (numberOfPage > 1) {
-      if (pages === Math.ceil(numberOfData / 10)) {
+      if (currentPage === Math.ceil(numberOfData / 10)) {
         return `Showing ${remainer} from ${numberOfData}`
       }
 
@@ -24,36 +24,36 @@ const TableFooter = (props: Props) => {
     }
 
     return `Showing ${numberOfData} from ${numberOfData}`
-  }, [numberOfData, pages])
+  }, [numberOfData, currentPage])
 
   const loadPages = () => {
     const items = [
-      <Pagination.Item key="first" onClick={() => { setPages(1) }}>
+      <Pagination.Item key="first" onClick={() => { setCurrentPage(1) }}>
         &laquo;
       </Pagination.Item>
     ];
     if (Math.ceil(numberOfData / 10) > 5) {
-      if (pages === 1 || pages === 2) {
+      if (currentPage === 1 || currentPage === 2) {
 
         for (let i = 0; i < 5; i++) {
           items.push(
-            <Pagination.Item key={i + 1} active={pages === i + 1} onClick={() => { setPages(i + 1) }}>
+            <Pagination.Item key={i + 1} active={currentPage === i + 1} onClick={() => { setCurrentPage(i + 1) }}>
               {i + 1}
             </Pagination.Item>
           )
         }
-      } else if (pages >= 3 && pages < Math.ceil(numberOfData / 10) - 1) {
-        for (let i = (pages - 3); i < (pages + 2); i++) {
+      } else if (currentPage >= 3 && currentPage < Math.ceil(numberOfData / 10) - 1) {
+        for (let i = (currentPage - 3); i < (currentPage + 2); i++) {
           items.push(
-            <Pagination.Item key={i + 1} active={pages === i + 1} onClick={() => { setPages(i + 1) }}>
+            <Pagination.Item key={i + 1} active={currentPage === i + 1} onClick={() => { setCurrentPage(i + 1) }}>
               {i + 1}
             </Pagination.Item>
           )
         }
-      } else if (pages === Math.ceil(numberOfData / 10) - 1 || pages === Math.ceil(numberOfData / 10)) {
+      } else if (currentPage === Math.ceil(numberOfData / 10) - 1 || currentPage === Math.ceil(numberOfData / 10)) {
         for (let i = Math.ceil(numberOfData / 10) - 5; i < Math.ceil(numberOfData / 10); i++) {
           items.push(
-            <Pagination.Item key={i + 1} active={pages === i + 1} onClick={() => { setPages(i + 1) }}>
+            <Pagination.Item key={i + 1} active={currentPage === i + 1} onClick={() => { setCurrentPage(i + 1) }}>
               {i + 1}
             </Pagination.Item>
           )
@@ -62,7 +62,7 @@ const TableFooter = (props: Props) => {
     } else {
       for (let i = 0; i < Math.ceil(numberOfData / 10); i++) {
         items.push(
-          <Pagination.Item key={i + 1} active={pages === i + 1} onClick={() => { setPages(i + 1) }}>
+          <Pagination.Item key={i + 1} active={currentPage === i + 1} onClick={() => { setCurrentPage(i + 1) }}>
             {i + 1}
           </Pagination.Item>
         )
@@ -70,7 +70,7 @@ const TableFooter = (props: Props) => {
     }
 
     items.push(
-      <Pagination.Item key="last" onClick={() => { setPages(Math.ceil(numberOfData / 10)) }}>
+      <Pagination.Item key="last" onClick={() => { setCurrentPage(Math.ceil(numberOfData / 10)) }}>
         &raquo;
       </Pagination.Item>
     )
@@ -81,7 +81,7 @@ const TableFooter = (props: Props) => {
 
   useEffect(() => {
     loadPages();
-  }, [numberOfData, pages])
+  }, [numberOfData, currentPage])
 
   return (
     <div className="d-flex align-items-center justify-content-between">
