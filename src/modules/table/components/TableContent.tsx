@@ -1,5 +1,6 @@
 import React, { memo } from 'react'
 import { Dropdown } from 'react-bootstrap'
+import { FormattedMessage } from 'react-intl'
 import { ITableData, sortingProps } from '../../../models/tableModel'
 import '../../../scss/table/table.scss'
 import DataRow from './DataRow'
@@ -51,11 +52,13 @@ const TableContent = (props: Props) => {
       <table className="table table-borderless" style={{ borderCollapse: "separate", borderSpacing: '0 15px' }}>
         <thead>
           <tr style={{ border: 'none' }}>
-            <th scope="col" style={{ color: "#29506f" }}>Status</th>
+            <th scope="col" style={{ color: "#29506f" }}>
+              <FormattedMessage id="status" />
+            </th>
             <th scope="col" style={{ color: "#29506f" }} className="d-flex align-items-center justify-content-start">
               <Dropdown className="d-flex" style={{ cursor: 'pointer' }}>
                 <Dropdown.Toggle as={CustomToggle} id="dropdown">
-                  Date
+                  <FormattedMessage id="date" />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item
@@ -69,7 +72,7 @@ const TableContent = (props: Props) => {
                       }))
                     }}
                   >
-                    Ascending
+                    <FormattedMessage id="ascending" />
                   </Dropdown.Item>
                   <Dropdown.Item eventKey="descending"
                     onClick={() => {
@@ -80,17 +83,21 @@ const TableContent = (props: Props) => {
                         active: true
                       }))
                     }}>
-                    Descending
+                    <FormattedMessage id="descending" />
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </th>
-            <th scope="col" style={{ color: "#29506f" }}>Client</th>
-            <th scope="col" style={{ color: "#29506f" }}>Currency</th>
+            <th scope="col" style={{ color: "#29506f" }}>
+              <FormattedMessage id="client" />
+            </th>
+            <th scope="col" style={{ color: "#29506f" }}>
+              <FormattedMessage id="currency" />
+            </th>
             <th scope="col" style={{ color: "#29506f" }} className="d-flex align-items-center justify-content-start">
               <Dropdown className="d-flex" style={{ cursor: 'pointer' }}>
                 <Dropdown.Toggle as={CustomToggle} id="dropdown">
-                  Total
+                  <FormattedMessage id="total" />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item eventKey="ascending"
@@ -102,7 +109,7 @@ const TableContent = (props: Props) => {
                         active: true
                       }))
                     }}>
-                    Ascending
+                    <FormattedMessage id="ascending" />
                   </Dropdown.Item>
                   <Dropdown.Item eventKey="descending"
                     onClick={() => {
@@ -113,12 +120,13 @@ const TableContent = (props: Props) => {
                         active: true
                       }))
                     }}>
-                    Descending
+                    <FormattedMessage id="descending" />
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </th>
-            <th scope="col" style={{ color: "#29506f" }}>Invoice #</th>
+            <th scope="col" style={{ color: "#29506f" }}>
+              <FormattedMessage id="invoice" /> #</th>
           </tr>
         </thead>
         <tbody className="gap-3">

@@ -3,7 +3,7 @@ import { ITableData } from '../../../models/tableModel'
 import Button from '../../common/components/Button'
 import { checkColor } from '../utils/commonFunction'
 import CurrencyFormat from 'react-currency-format';
-import { FormattedNumber } from 'react-intl';
+import { FormattedNumber, useIntl } from 'react-intl';
 
 type Props = {
   item: ITableData,
@@ -23,12 +23,15 @@ type Props = {
 }
 
 const DataRow = (props: Props) => {
+  const intl = useIntl();
   const { item, onDelete, onEdit } = props
   return (
     <tr className="table-row" key={item.invoice} >
       <td style={{
         color: checkColor(item.status)
-      }}>{item.status}</td>
+      }}>{intl.formatMessage({
+        id: item.status.toLowerCase()
+      })}</td>
       <td>{item.date}</td>
       <td>{item.clientID}</td>
       <td>{item.currency}</td>
@@ -43,7 +46,7 @@ const DataRow = (props: Props) => {
             borderColor: "#29506f",
             color: "#29506f",
           }}
-          content="View Details"
+          content={intl.formatMessage({ id: "viewDetails" })}
           handleClick={() => {
             onEdit({
               show: true,
@@ -59,7 +62,7 @@ const DataRow = (props: Props) => {
             borderRadius: '30px',
             borderColor: "#b80e52",
             color: "#b80e52"
-          }} content="Delete" handleClick={() => {
+          }} content={intl.formatMessage({ id: "delete" })} handleClick={() => {
             onDelete({
               show: true,
               content: 'Are you sure to delete this information?',

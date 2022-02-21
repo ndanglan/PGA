@@ -1,15 +1,16 @@
 import React, { memo } from 'react'
 import { FormattedMessage } from 'react-intl'
-import { filterProps } from '../../../models/tableModel'
-import Button from '../../common/components/Button'
-import { IFilters } from '../utils/commonFunction'
+import { ITableData } from '../../../models/tableModel'
+import { CSVDownload, CSVLink } from "react-csv";
 import Filter from './Filter'
 interface Props {
   updatedFilter(type: string, values?: string, dateFrom?: number, dateTo?: number): void,
-  resetData(): void
+  resetData(): void,
+  valueTable: ITableData[]
 }
 
 const TableHeader = (props: Props) => {
+
   return (
     <div>
       {/* Title and export csv */}
@@ -17,11 +18,14 @@ const TableHeader = (props: Props) => {
         <h2 style={{ color: '#29506f' }}>
           <FormattedMessage id="payrollList" />
         </h2>
-        <Button styles={{
-          backgroundColor: '#1da9df',
-          color: "#fff"
-        }}
-          content="Export CSV" />
+        <CSVLink data={props.valueTable} className="d-block text-decoration-none" style={{
+          padding: '0.5rem 0.75rem 0.5rem 0.75rem',
+          borderRadius: '5px',
+          backgroundColor: '#53b8de',
+          color: '#fff'
+        }}>
+          <FormattedMessage id="dowloadcsv" />
+        </CSVLink>
       </div>
       {/* filter */}
       <div>

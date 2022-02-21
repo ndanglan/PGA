@@ -327,7 +327,7 @@ const TablePage = () => {
     <>
       <div style={{ backgroundColor: '#f6f7fb' }}>
         <div className="container p-3">
-          <TableHeader updatedFilter={updatedFilter} resetData={resetData} />
+          <TableHeader updatedFilter={updatedFilter} resetData={resetData} valueTable={valueTable} />
           <TableContent
             data={valueTable}
             currentPages={currentPage}

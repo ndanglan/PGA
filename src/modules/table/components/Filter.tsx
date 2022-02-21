@@ -4,6 +4,7 @@ import DatePicker from 'react-datepicker';
 import '../../../scss/table/table.scss'
 import { useSelector } from 'react-redux';
 import { AppState } from '../../../redux/reducer';
+import { FormattedMessage, useIntl } from 'react-intl';
 interface Props {
   updatedFilter(type: string, values?: string, dateFrom?: number, dateTo?: number): void,
   resetData(): void,
@@ -19,6 +20,7 @@ const CustomInput = forwardRef(function DateInput(props: any, ref: any) {
 })
 
 const Filter = (props: Props) => {
+  const intl = useIntl();
   const [date, setDate] = useState<{
     from: Date | null,
     to: Date | null
@@ -65,12 +67,13 @@ const Filter = (props: Props) => {
     // render ra jsx
     renderArr.push(
       <option value={''} className="text-capitalize" key={0}>
-        {key}
+        {intl.formatMessage({ id: key })}
       </option>,
     )
     keyArr.map((item) => {
       renderArr.push(
-        <option value={item} key={item}>{item}</option>
+        <option value={item} key={item}>{intl.formatMessage({ id: item.toLowerCase() })}
+        </option>
       )
     })
 
@@ -117,7 +120,7 @@ const Filter = (props: Props) => {
         {/* Date */}
         <div>
           <DatePicker
-            className="filter-field" placeholderText="From"
+            className="filter-field" placeholderText={intl.formatMessage({ id: "from" })}
             selected={date.from}
             onChange={(date) => {
               setDate((prev) => {
@@ -143,13 +146,13 @@ const Filter = (props: Props) => {
                 }
               })
             }}
-            placeholderText="To"
+            placeholderText={intl.formatMessage({ id: "to" })}
             customInput={<CustomInput />}
           />
         </div>
 
         {/* Invoice */}
-        <input type="text" placeholder="Invoice" className="form-control" />
+        <input type="text" placeholder={intl.formatMessage({ id: "invoice" })} className="form-control" />
       </form>
 
       <div className="d-flex gap-3">
@@ -157,12 +160,12 @@ const Filter = (props: Props) => {
           border: '2px solid #1da9df',
           color: "#1da9df"
         }}
-          content="Apply"
+          content={intl.formatMessage({ id: "apply" })}
         />
         <Button styles={{
           border: "2px solid #b80e52",
           color: "#b80e52"
-        }} content="Clear" handleClick={() => {
+        }} content={intl.formatMessage({ id: "clear" })} handleClick={() => {
           setFormValues({
             status: '',
             client: '',
