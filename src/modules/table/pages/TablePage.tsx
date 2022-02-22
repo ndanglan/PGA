@@ -147,8 +147,11 @@ const TablePage = () => {
   }
   // xét hàm vào filters để filter bằng các hàm đó 
   const updatedFilter = (type: string, values?: string, dateFrom?: number, dateTo?: number) => {
+
     let filterObj = {};
     let newArr = [];
+
+    setCurrentPage(1);
 
     if (type === 'reset') {
       // truyền type reset thì xóa các hàm filters rồi xét data lại về data trong store
