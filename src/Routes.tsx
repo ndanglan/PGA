@@ -14,6 +14,7 @@ const LoginPage = lazy(() => import('./modules/auth/pages/LoginPage'));
 const RegisterPage = lazy(() => import('./modules/auth/pages/RegisterPage'));
 const HomePage = lazy(() => import('./modules/home/pages/HomePage'));
 const AlbumPage = lazy(() => import('./modules/album/pages/AlbumPage'));
+const AlbumDetails = lazy(() => import('./modules/album/pages/AlbumDetails'))
 const UserInfoPage = lazy(() => import('./modules/userinfo/pages/UserInfoPage'));
 const TablePage = lazy(() => import('./modules/table/pages/TablePage'))
 
@@ -28,6 +29,7 @@ const MainRoutes = () => {
         <Route path={ROUTES.login} component={LoginPage} />
         <ProtectedRoute path={ROUTES.home} component={HomePage} />
         <ProtectedRoute path={ROUTES.userInfo} component={UserInfoPage} />
+        <ProtectedRoute path={`${ROUTES.album}/:id`} component={AlbumDetails} />
         <ProtectedRoute path={ROUTES.album} component={AlbumPage}></ProtectedRoute>
         <ProtectedRoute path={ROUTES.table} component={TablePage}></ProtectedRoute>
         <Route path={ROUTES.register} component={RegisterPage} />

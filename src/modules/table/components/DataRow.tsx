@@ -1,7 +1,7 @@
 import React, { memo } from 'react'
 import { ITableData } from '../../../models/tableModel'
 import Button from '../../common/components/Button'
-import { checkColor } from '../utils/commonFunction'
+import { checkColor } from '../utils'
 import CurrencyFormat from 'react-currency-format';
 import { FormattedNumber, useIntl } from 'react-intl';
 

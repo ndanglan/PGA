@@ -11,7 +11,7 @@ import { LIST_PAYROLL } from '../../../assets/data/mock_data';
 import { filterProps, ITableData, sortingProps } from '../../../models/tableModel'
 import ConfirmPopup from '../components/ConfirmPopup'
 import ModalEdit from '../components/ModalEdit'
-import { checkStatus, convertToTime, filterArray, formatTime } from '../utils/commonFunction'
+import { checkStatus, convertToTime, filterArray, formatTime } from '../utils'
 import TableFooter from '../components/TableFooter'
 
 const mockNameClient = [
@@ -210,7 +210,6 @@ const TablePage = () => {
         }
       })
 
-
     } else {
       // add thêm vào obj các filters trong state hiện tại + thêm cái muốn cho vào ngay bây giờ 
       filterObj = {
@@ -237,11 +236,8 @@ const TablePage = () => {
     // sau khi filter sẽ check có đang sorting hay không 
     // check nếu có đang sorting hay không
     if (sortings.active) {
-      console.log('active');
 
       newArr = handleSorting(newArr, sortings.key, sortings.type)
-
-      console.log(newArr);
 
     }
 

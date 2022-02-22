@@ -1,4 +1,6 @@
 import React, { useState, memo, useEffect } from 'react'
+import { Link } from 'react-router-dom';
+import { ROUTES } from '../../../config/routes';
 import '../../../scss/ListItem.scss'
 
 interface Props {
@@ -26,7 +28,7 @@ const ListItem = (props: Props) => {
   }, [title, prevTitle])
 
   return (
-    <div className="card d-flex p-3 flex-row"
+    <div className="card d-flex p-3 flex-row position-relative"
       style={{
         width: '100%',
         backgroundColor: id % 2 === 0 ? 'grey' : 'white'
@@ -48,6 +50,13 @@ const ListItem = (props: Props) => {
         <div>
           {Date.now()}
         </div>
+      </div>
+
+      <div className="position-absolute" style={{
+        bottom: '10px',
+        right: '10px'
+      }}>
+        <Link to={`${ROUTES.album}/${id}`}>Go to details </Link>
       </div>
     </div>
   )

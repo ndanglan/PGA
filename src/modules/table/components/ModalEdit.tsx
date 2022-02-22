@@ -2,10 +2,9 @@ import React, { useEffect, useState, memo } from 'react'
 import { Modal } from 'react-bootstrap'
 import { ITableData } from '../../../models/tableModel'
 import Button from '../../common/components/Button'
-import { checkColor } from '../utils/commonFunction'
 import { AppState } from '../../../redux/reducer'
 import { useSelector } from 'react-redux'
-import { validateTable, validTable } from '../utils/validate'
+import { validateTable, validTable, checkColor } from '../utils'
 
 type Props = {
   show: boolean,
