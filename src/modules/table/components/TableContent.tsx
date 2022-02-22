@@ -21,7 +21,7 @@ type Props = {
     title: string,
     id: string
   }): void,
-  onSorting: React.Dispatch<React.SetStateAction<sortingProps>>
+  onSorting(type: string, key: string): void
 }
 
 const CustomToggle = React.forwardRef(function customToggle(props: any, ref: any) {
@@ -63,12 +63,7 @@ const TableContent = (props: Props) => {
                     eventKey="ascending"
                     onClick={() => {
                       // ấn thì thay đổi state sorting 
-                      onSorting(prev => ({
-                        ...prev,
-                        type: 'ascending',
-                        key: 'date',
-                        active: true
-                      }))
+                      onSorting('ascending', 'date')
                     }}
                   >
                     <FormattedMessage id="ascending" />
@@ -76,12 +71,7 @@ const TableContent = (props: Props) => {
                   <Dropdown.Item eventKey="descending"
                     onClick={() => {
                       // ấn thì thay đổi state sorting 
-                      onSorting(prev => ({
-                        ...prev,
-                        type: 'descending',
-                        key: 'date',
-                        active: true
-                      }))
+                      onSorting('descending', 'date')
                     }}>
                     <FormattedMessage id="descending" />
                   </Dropdown.Item>
@@ -102,23 +92,13 @@ const TableContent = (props: Props) => {
                 <Dropdown.Menu>
                   <Dropdown.Item eventKey="ascending"
                     onClick={() => {
-                      onSorting(prev => ({
-                        ...prev,
-                        type: 'ascending',
-                        key: 'total',
-                        active: true
-                      }))
+                      onSorting('ascending', 'total')
                     }}>
                     <FormattedMessage id="ascending" />
                   </Dropdown.Item>
                   <Dropdown.Item eventKey="descending"
                     onClick={() => {
-                      onSorting(prev => ({
-                        ...prev,
-                        type: 'descending',
-                        key: 'total',
-                        active: true
-                      }))
+                      onSorting('descending', 'total')
                     }}>
                     <FormattedMessage id="descending" />
                   </Dropdown.Item>

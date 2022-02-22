@@ -98,38 +98,64 @@ const TablePage = () => {
 
   // sorting 
   // xử lí sort ascen theo date hoặc total 
-  const handleSortingAscending = (data: ITableData[], key: string) => {
+  const handleSorting = (data: ITableData[], key: string, type: string) => {
     let newArr = [];
-    if (key === 'date') {
-      newArr = data.sort((a, b) => convertToTime(a.date) - convertToTime(b.date));
-      return newArr;
+
+    if (type === 'ascending') {
+      if (key === 'date') {
+        newArr = data.sort((a, b) => convertToTime(a.date) - convertToTime(b.date));
+        return newArr;
+      }
+
+      if (key === 'total') {
+        newArr = data.sort((a, b) => (+a.total) - (+b.total))
+        return newArr;
+      }
     }
 
-    if (key === 'total') {
-      newArr = data.sort((a, b) => (+a.total) - (+b.total))
-      return newArr;
-    }
+    if (type === 'descending') {
+      if (key === 'date') {
+        newArr = data.sort((a, b) => convertToTime(b.date) - convertToTime(a.date));
+        return newArr;
+      }
 
+      if (key === 'total') {
+        newArr = data.sort((a, b) => (+b.total) - (+a.total))
+        return newArr;
+      }
+    }
     return data
   }
 
-  // xử lí sort descen theo date hoặc total 
-  const handleSortingDescending = (data: ITableData[], key: string) => {
-    let newArr = [];
-    if (key === 'date') {
-      newArr = data.sort((a, b) => convertToTime(b.date) - convertToTime(a.date));
-      return newArr;
+  // update sorting type để kích hoạt sorting khi bấm
+  const updatedSorting = (type: string, key: string) => {
+    setCurrentPage(1);
+
+    if (type === 'reset') {
+      setSortings({
+        type: '',
+        key: '',
+        active: false
+      })
+
+      return;
     }
 
-    if (key === 'total') {
-      newArr = data.sort((a, b) => (+b.total) - (+a.total))
-      return newArr;
-    }
+    setValueTable((prev: ITableData[]) => {
+      const cloneArr = [...prev];
+      const newArr = handleSorting(cloneArr, key, type);
 
-    return data
+      return newArr
+    });
+
+    setSortings({
+      type: type,
+      key: key,
+      active: true
+    })
   }
 
-  // update filter 
+  // handle filter xử lí filter 
   const handleFilter = (data: ITableData[], filters: any) => {
 
     const newArr = filterArray(data, filters).map(item => {
@@ -145,6 +171,7 @@ const TablePage = () => {
 
     return newArr;
   }
+
   // xét hàm vào filters để filter bằng các hàm đó 
   const updatedFilter = (type: string, values?: string, dateFrom?: number, dateTo?: number) => {
 
@@ -153,26 +180,20 @@ const TablePage = () => {
 
     setCurrentPage(1);
 
-    if (type === 'reset') {
-      // truyền type reset thì xóa các hàm filters rồi xét data lại về data trong store
-      setFilters({
-        active: true,
-        filters: {},
-      })
-      setValueTable(data)
-      return;
-    }
-
     if (type === 'date') {
       // add thêm vào obj các filters trong state hiện tại + thêm cái muốn cho vào ngay bây giờ 
       filterObj = {
         ...filters.filters,
-        [`${type}`]: (test: string) => test === values
+        [`${type}`]: (test: string) => {
+          if (dateFrom && dateTo) {
+            return convertToTime(test) >= dateFrom && convertToTime(test) <= dateTo
+          }
+        }
       };
 
       // filters theo obj mới
       newArr = handleFilter(data, filterObj);
-      setValueTable(newArr)
+
       // xét state filters cũ thành cái mới để lặp cho lần sau 
       setFilters((prev: filterProps) => {
         return {
@@ -189,37 +210,58 @@ const TablePage = () => {
         }
       })
 
-      return;
-    }
-    // add thêm vào obj các filters trong state hiện tại + thêm cái muốn cho vào ngay bây giờ 
-    filterObj = {
-      ...filters.filters,
-      [`${type}`]: (test: string) => test === values
-    };
-    // filters theo obj mới
-    newArr = handleFilter(data, filterObj);
-    setValueTable(newArr)
-    // xét state filters cũ thành cái mới để lặp cho lần sau 
-    setFilters((prev: filterProps) => {
-      return {
-        ...prev,
-        active: true,
-        filters: {
-          ...prev.filters,
-          [`${type}`]: (test: string) => test === values
+
+    } else {
+      // add thêm vào obj các filters trong state hiện tại + thêm cái muốn cho vào ngay bây giờ 
+      filterObj = {
+        ...filters.filters,
+        [`${type}`]: (test: string) => test === values
+      };
+
+      // filters theo obj mới
+      newArr = handleFilter(data, filterObj);
+
+      // xét state filters cũ thành cái mới để lặp cho lần sau 
+      setFilters((prev: filterProps) => {
+        return {
+          ...prev,
+          active: true,
+          filters: {
+            ...prev.filters,
+            [`${type}`]: (test: string) => test === values
+          }
         }
-      }
-    })
+      })
+    }
+
+    // sau khi filter sẽ check có đang sorting hay không 
+    // check nếu có đang sorting hay không
+    if (sortings.active) {
+      console.log('active');
+
+      newArr = handleSorting(newArr, sortings.key, sortings.type)
+
+      console.log(newArr);
+
+    }
+
+    setValueTable(newArr)
   }
 
   // reset filters
   const resetData = () => {
-    updatedFilter('reset');
     setSortings({
-      active: true,
-      type: 'reset',
-      key: ''
+      key: '',
+      type: '',
+      active: false
     })
+
+    setFilters({
+      active: false,
+      filters: {}
+    })
+
+    setValueTable(data)
   }
 
   // confirm function 
@@ -354,28 +396,6 @@ const TablePage = () => {
     fetchData()
   }, [fetchData])
 
-  // useEffect(() => {
-  //   if (sortings.active && sortings.type === 'ascending') {
-  //     // khi sorting được active và type = ascending thì sort state đang hiển thị 
-
-  //     const newArr = handleSortingAscending(valueTable, sortings.key);
-
-  //     setValueTable([...newArr])
-  //     return;
-  //   }
-
-  //   if (sortings.active && sortings.type === 'descending') {
-  //     // tương tự với descen
-  //     const newArr = handleSortingDescending(valueTable, sortings.key)
-  //     setValueTable([...newArr])
-  //     return;
-  //   }
-
-  //   if (sortings.type === 'reset') {
-  //     setValueTable(data);
-  //   }
-  // }, [sortings.key, sortings.type])
-
   return (
     <>
       <div style={{ backgroundColor: '#f6f7fb' }}>
@@ -389,7 +409,7 @@ const TablePage = () => {
             currentPages={currentPage}
             onDelete={setShowModalConfirm}
             onEdit={setShowModalEdit}
-            onSorting={setSortings}
+            onSorting={updatedSorting}
           />
           <TableFooter
             numberOfData={valueTable.length} setCurrentPage={setCurrentPage}
