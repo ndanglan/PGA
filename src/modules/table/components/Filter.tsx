@@ -73,8 +73,10 @@ const Filter = (props: Props) => {
       </option>,
     )
     keyArr.map((item) => {
+
       renderArr.push(
-        <option value={item} key={item}>{intl.formatMessage({ id: item.toLowerCase() })}
+        <option value={item} key={item}>
+          {item}
         </option>
       )
     })

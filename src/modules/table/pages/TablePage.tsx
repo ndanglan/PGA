@@ -130,64 +130,9 @@ const TablePage = () => {
   }
 
   // update filter 
-  // xét hàm vào filters để filter bằng các hàm đó 
-  const updatedFilter = useCallback((type: string, values?: string, dateFrom?: number, dateTo?: number) => {
-    if (type === 'status') {
-      setFilters((prev: filterProps) => {
-        return {
-          ...prev,
-          active: true,
-          filters: {
-            ...prev.filters,
-            status: (test: string) => test === values
-          }
-        }
-      })
-      return;
-    }
+  const handleFilter = (data: ITableData[], filters: any) => {
 
-    if (type === 'clientID') {
-      setFilters((prev: filterProps) => {
-        return {
-          ...prev,
-          active: true,
-          filters: {
-            ...prev.filters,
-            clientID: (test: string) => test === values
-          }
-        }
-      })
-    }
-
-    if (type === 'date') {
-      setFilters((prev: filterProps) => {
-        return {
-          ...prev,
-          active: true,
-          filters: {
-            ...prev.filters,
-            date: (test: string) => {
-              if (dateFrom && dateTo) {
-                return convertToTime(test) >= dateFrom && convertToTime(test) <= dateTo
-              }
-            }
-          }
-        }
-      })
-    }
-
-    // clear các filters
-    if (type === 'reset') {
-      setFilters({
-        active: true,
-        filters: {},
-      })
-    }
-
-  }, [])
-
-  const handleFilter = (data: ITableData[], filters: filterProps) => {
-    const newArr = filterArray(data, filters.filters).map(item => {
+    const newArr = filterArray(data, filters).map(item => {
       return {
         date: item['date'],
         total: item['total'],
@@ -197,7 +142,71 @@ const TablePage = () => {
         status: item['status'],
       }
     })
+
     return newArr;
+  }
+  // xét hàm vào filters để filter bằng các hàm đó 
+  const updatedFilter = (type: string, values?: string, dateFrom?: number, dateTo?: number) => {
+    let filterObj = {};
+    let newArr = [];
+
+    if (type === 'reset') {
+      // truyền type reset thì xóa các hàm filters rồi xét data lại về data trong store
+      setFilters({
+        active: true,
+        filters: {},
+      })
+      setValueTable(data)
+      return;
+    }
+
+    if (type === 'date') {
+      // add thêm vào obj các filters trong state hiện tại + thêm cái muốn cho vào ngay bây giờ 
+      filterObj = {
+        ...filters.filters,
+        [`${type}`]: (test: string) => test === values
+      };
+
+      // filters theo obj mới
+      newArr = handleFilter(data, filterObj);
+      setValueTable(newArr)
+      // xét state filters cũ thành cái mới để lặp cho lần sau 
+      setFilters((prev: filterProps) => {
+        return {
+          ...prev,
+          active: true,
+          filters: {
+            ...prev.filters,
+            [`${type}`]: (test: string) => {
+              if (dateFrom && dateTo) {
+                return convertToTime(test) >= dateFrom && convertToTime(test) <= dateTo
+              }
+            }
+          }
+        }
+      })
+
+      return;
+    }
+    // add thêm vào obj các filters trong state hiện tại + thêm cái muốn cho vào ngay bây giờ 
+    filterObj = {
+      ...filters.filters,
+      [`${type}`]: (test: string) => test === values
+    };
+    // filters theo obj mới
+    newArr = handleFilter(data, filterObj);
+    setValueTable(newArr)
+    // xét state filters cũ thành cái mới để lặp cho lần sau 
+    setFilters((prev: filterProps) => {
+      return {
+        ...prev,
+        active: true,
+        filters: {
+          ...prev.filters,
+          [`${type}`]: (test: string) => test === values
+        }
+      }
+    })
   }
 
   // reset filters
@@ -215,14 +224,35 @@ const TablePage = () => {
     // nếu values truyền vào không có id của đơn hàng thì xóa 
     if (!values?.invoice) {
       // tạo mảng mới sau khi xóa
-      let newArr = data.filter((item: ITableData) => {
+      const newArr = data.filter((item: ITableData) => {
         return item.invoice !== id
       })
+
       // truyền lên redux
       dispatch(setTableData(newArr))
       // sau khi truyền mảng mới vào redux thì xét xem có đang ở trạng thái filter nào không nếu có thì filter rồi mới set vào state mới
       if (Object.keys(filters.filters).length > 0) {
-        newArr = handleFilter(newArr, filters)
+        // nếu data đang hiển thị là ở trạng thái filters thì xóa ở cái data đó luôn tránh render lại lần nữa
+        setValueTable((prev: ITableData[]) => {
+          return prev.filter(item => item.invoice !== id);
+        })
+
+        setShowModalConfirm({
+          show: false,
+          content: '',
+          payload: {
+            id: '',
+            data: {
+              date: '',
+              total: '0',
+              currency: '',
+              invoice: '',
+              clientID: '',
+              status: ''
+            }
+          },
+        })
+        return;
       }
 
       setValueTable(newArr);
@@ -248,12 +278,37 @@ const TablePage = () => {
     const existIndex = data.findIndex(item => item.invoice === id);
     // xét lại với mảng mới
     data[existIndex] = { ...values };
-    let newArr = [...data]
+    const newArr = [...data]
     // truyền vào store
     dispatch(setTableData(newArr));
     // nếu đang filter thì filter rồi mới xét lại vào state
     if (Object.keys(filters.filters).length > 0) {
-      newArr = handleFilter(newArr, filters)
+      // nếu đang filter thì update ở cái mảng đang hiển thị để tránh render
+      setValueTable((prev: ITableData[]) => {
+        const existIndex = prev.findIndex(item => item.invoice === id);
+
+        prev[existIndex] = { ...values }
+        const newArr = [...prev];
+
+        return newArr;
+      })
+
+      setShowModalConfirm({
+        show: false,
+        content: '',
+        payload: {
+          id: '',
+          data: {
+            date: '',
+            total: '0',
+            currency: '',
+            invoice: '',
+            clientID: '',
+            status: ''
+          }
+        },
+      })
+      return;
     }
 
     setValueTable(newArr);
@@ -290,78 +345,53 @@ const TablePage = () => {
 
     dispatch(setTableData(newArr))
     setValueTable(newArr)
-    // setPages(Math.ceil(newArr.length/10));
   }, [dispatch])
 
   useEffect(() => {
     fetchData()
   }, [fetchData])
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   if (sortings.active && sortings.type === 'ascending') {
+  //     // khi sorting được active và type = ascending thì sort state đang hiển thị 
 
-    if (Object.keys(filters.filters).length !== 0 && filters.active) {
-      // khi filters state thay đổi được gọi active và có hàm trong filters.filters thì filters data trong store rồi xét vào state ở ngoài để hiện thị 
-      const newArr = handleFilter(data, filters)
-      setValueTable(newArr)
-      //  khi filters thay đổi ( thêm cái filter mới thì sẽ quay lại trang đầu tiên)
-      setCurrentPage(1);
-      // sau khi xét filter xong thì cho active bằng false
-      setFilters((prev: filterProps) => {
-        return {
-          ...prev,
-          active: false
-        }
-      })
-    } else if (Object.keys(filters.filters).length === 0 && filters.active) {
-      // khi ấn clear thì đã có length bằng 0 và active được cho bằng true thì reset lại data đang ở trong store
-      setValueTable(data)
-      setCurrentPage(1);
-      // sau khi xét xong thì active lai bằng false
-      setFilters((prev: filterProps) => {
-        return {
-          ...prev,
-          active: false
-        }
-      })
-    }
-  }, [filters, data])
+  //     const newArr = handleSortingAscending(valueTable, sortings.key);
 
-  useEffect(() => {
-    if (sortings.active && sortings.type === 'ascending') {
-      // khi sorting được active và type = ascending thì sort state đang hiển thị 
+  //     setValueTable([...newArr])
+  //     return;
+  //   }
 
-      const newArr = handleSortingAscending(valueTable, sortings.key);
+  //   if (sortings.active && sortings.type === 'descending') {
+  //     // tương tự với descen
+  //     const newArr = handleSortingDescending(valueTable, sortings.key)
+  //     setValueTable([...newArr])
+  //     return;
+  //   }
 
-      setValueTable([...newArr])
-      return;
-    }
-
-    if (sortings.active && sortings.type === 'descending') {
-      // tương tự với descen
-      const newArr = handleSortingDescending(valueTable, sortings.key)
-      setValueTable([...newArr])
-      return;
-    }
-
-    if (sortings.type === 'reset') {
-      setValueTable(data);
-    }
-  }, [sortings.key, sortings.type])
+  //   if (sortings.type === 'reset') {
+  //     setValueTable(data);
+  //   }
+  // }, [sortings.key, sortings.type])
 
   return (
     <>
       <div style={{ backgroundColor: '#f6f7fb' }}>
         <div className="container p-3">
-          <TableHeader updatedFilter={updatedFilter} resetData={resetData} valueTable={valueTable} />
+          <TableHeader
+            updatedFilter={updatedFilter}
+            resetData={resetData}
+            valueTable={valueTable} />
           <TableContent
             data={valueTable}
             currentPages={currentPage}
             onDelete={setShowModalConfirm}
             onEdit={setShowModalEdit}
-            updatedFilter={updatedFilter}
             onSorting={setSortings}
           />
-          <TableFooter numberOfData={valueTable.length} setCurrentPage={setCurrentPage} currentPage={currentPage} />
+          <TableFooter
+            numberOfData={valueTable.length} setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
+          />
         </div>
       </div>
       {showModalEdit.show && (

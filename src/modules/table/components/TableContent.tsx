@@ -21,11 +21,6 @@ type Props = {
     title: string,
     id: string
   }): void,
-  updatedFilter(
-    type: string,
-    values?: string,
-    dateFrom?: number,
-    dateTo?: number): void,
   onSorting: React.Dispatch<React.SetStateAction<sortingProps>>
 }
 
