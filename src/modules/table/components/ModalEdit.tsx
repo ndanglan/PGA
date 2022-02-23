@@ -5,6 +5,7 @@ import Button from '../../common/components/Button'
 import { AppState } from '../../../redux/reducer'
 import { useSelector } from 'react-redux'
 import { validateTable, validTable, checkColor } from '../utils'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 type Props = {
   show: boolean,
@@ -15,6 +16,7 @@ type Props = {
 }
 
 const ModalEdit = (props: Props) => {
+  const intl = useIntl();
   const { show, id, title, handleClose, handleConfirm } = props;
   const { data } = useSelector((state: AppState) => state.table)
 
@@ -71,38 +73,45 @@ const ModalEdit = (props: Props) => {
         <form>
           <div className="row mb-3">
             <label className="col-sm-3 col-form-label">
-              Status
+              <FormattedMessage id="status" />
             </label>
             <div className="col-sm d-flex align-items-center">
               <label style={{ color: checkColor(formValues.status) }}>
-                {formValues.status}
+                <FormattedMessage id={formValues.status.toLowerCase()} />
               </label>
             </div>
           </div>
           <div className="row mb-3">
             <label className="col-sm-3 col-form-label">
-              Date
+              <FormattedMessage id="date" />
             </label>
             <div className="col-sm">
-              <input className="form-control form-control my-auto w-100" type="text" value={formValues.date} onChange={(e) => {
-                setFormValues(prev => ({
-                  ...prev,
-                  date: e.target.value
-                }))
-              }} />
+              <input
+                className="form-control form-control my-auto w-100"
+                type="text"
+                value={formValues.date}
+                onChange={(e) => {
+                  setFormValues(prev => ({
+                    ...prev,
+                    date: e.target.value
+                  }))
+                }} />
               {!!validate.date && (
                 <small className="text-danger">
-                  {validate.date}
+                  <FormattedMessage id={validate.date} />
                 </small>
               )}
             </div>
           </div>
           <div className="row mb-3">
             <label className="col-sm-3 col-form-label">
-              Client
+              <FormattedMessage id="client" />
             </label>
             <div className="col-sm">
-              <input className="form-control form-control my-auto w-100" type="text" value={formValues.clientID}
+              <input
+                className="form-control form-control my-auto w-100"
+                type="text"
+                value={formValues.clientID}
                 onChange={(e) => {
                   setFormValues(prev => ({
                     ...prev,
@@ -111,14 +120,14 @@ const ModalEdit = (props: Props) => {
                 }} />
               {!!validate.clientID && (
                 <small className="text-danger">
-                  {validate.clientID}
+                  <FormattedMessage id={validate.clientID} />
                 </small>
               )}
             </div>
           </div>
           <div className="row mb-3">
             <label className="col-sm-3 col-form-label">
-              Currency
+              <FormattedMessage id="currency" />
             </label>
             <div className="col-sm">
               <input className="form-control form-control my-auto w-100" type="text" value={formValues.currency}
@@ -130,14 +139,14 @@ const ModalEdit = (props: Props) => {
                 }} />
               {!!validate.currency && (
                 <small className="text-danger">
-                  {validate.currency}
+                  <FormattedMessage id={validate.currency} />
                 </small>
               )}
             </div>
           </div>
           <div className="row mb-3">
             <label className="col-sm-3 col-form-label">
-              Total
+              <FormattedMessage id="total" />
             </label>
             <div className="col-sm ">
               <input className="form-control my-auto w-100" type="text" value={formValues.total} onChange={(e) => setFormValues(prev => ({
@@ -146,14 +155,14 @@ const ModalEdit = (props: Props) => {
               }))} />
               {!!validate.total && (
                 <small className="text-danger">
-                  {validate.total}
+                  <FormattedMessage id={validate.total} />
                 </small>
               )}
             </div>
           </div>
           <div className="row mb-3">
             <label className="col-sm-3 col-form-label">
-              Invoice
+              <FormattedMessage id="invoice" />
             </label>
             <div className="col-sm d-flex align-items-center">
               <label >
@@ -165,11 +174,15 @@ const ModalEdit = (props: Props) => {
       </Modal.Body>
       <Modal.Footer>
         <Button
-          content="Close"
+          content={intl.formatMessage({
+            id: "close"
+          })}
           handleClick={handleClose}
           styles={{ color: '#b80e52', borderColor: "#b80e52" }} />
         <Button
-          content="Confirm"
+          content={intl.formatMessage({
+            id: "confirm"
+          })}
           styles={{ color: '#29506f', borderColor: "#29506f" }}
           handleClick={() => {
             onConfirm(formValues)

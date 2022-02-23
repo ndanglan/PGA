@@ -59,5 +59,6 @@
   "regionRequire": "Choose your region",
   "stateRequire": "Choose your state",
   "userInfo": "User Information",
-  "album": "Album"
+  "album": "Album",
+  "dateNotValid": "Date must have format DD MMM YY"
 }

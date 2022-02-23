@@ -14,7 +14,6 @@ export function fetchThunk(
   contentType?: string,
 ): ThunkAction<Promise<any>, AppState, null, Action<string>> {
   return async (dispatch, getState) => {
-    console.log(contentType);
 
     const res = await fetch(url, {
       credentials: 'include',

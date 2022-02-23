@@ -21,10 +21,13 @@ import { Crops } from '../../../models/imgModel';
 import 'react-image-crop/dist/ReactCrop.css'
 import { generateUrlBlob } from '../utils';
 import Cookies from 'js-cookie';
+import { setUserInfo } from '../../auth/redux/authReducer';
+import { IUser } from '../../../models/userModel';
 
 const UserInfoPage = () => {
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
   const user = useSelector((state: AppState) => state.profile.user);
+  const [userInformation, setUserInformation] = useState<IUser>();
   const fileRef = useRef<HTMLInputElement>(null);
   const imgRef = useRef<any>(null);
   const previewCanvasRef = useRef<any>(null);
@@ -52,6 +55,7 @@ const UserInfoPage = () => {
     }
   });
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
 
   const handleClose = () => setModalShow(false);
@@ -63,14 +67,28 @@ const UserInfoPage = () => {
     //check nếu đã nhập file 
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();
+
       reader.addEventListener('load', () => setPreviewImg(reader.result as any));
+
       reader.readAsDataURL(e.target.files[0]);
       handleOpen();
     }
   }
 
-  // 
+  const getUserInfo = async () => {
+    // call Api user
+    const json = await dispatch(fetchThunk(API_PATHS.userProfile));
+
+    // nếu trả về thành công thì update vào store và setState để cho vào UI 
+    if (json.code === RESPONSE_STATUS_SUCCESS) {
+      dispatch(setUserInfo(json?.data))
+      setUserInformation(json?.data)
+    }
+  }
+
+  // xử lí chuyển canvas về file rồi upload lên server
   const onUploadImg = async () => {
+    setErrorMessage('');
     // chuyển từ propertise của canvas về file
     const file = await generateUrlBlob(previewCanvasRef.current, completedCrop);
 
@@ -78,20 +96,28 @@ const UserInfoPage = () => {
       const formData = new FormData();
       formData.append('file', file, file.name);
 
-      console.log(formData);
+      const json = await dispatch(async (dispatch, getState) => {
+        const res = await axios.put(API_PATHS.userProfile, formData, {
+          headers: {
+            'content-type': 'multipart/form-data',
+            Authorization: Cookies.get(ACCESS_TOKEN_KEY) || '',
+          }
+        })
 
-      const json = await axios.put(API_PATHS.userProfile, formData, {
-        headers: {
-          'content-type': 'multipart/form-data; boundary=<calculated when request is sent>',
-          Authorization: Cookies.get(ACCESS_TOKEN_KEY) || '',
-        },
+        return res
       })
 
-      console.log(json);
+      if (json.data.code === RESPONSE_STATUS_SUCCESS) {
+        // khi update thành thông thì lấy lại userInfo
+        getUserInfo();
+        return;
+      }
 
+      setErrorMessage(json.data.message)
+      return;
     }
-
   }
+
   // lấy ra element img khi preview được ảnh
   const onLoad = useCallback((img) => {
     imgRef.current = img;
@@ -142,12 +168,17 @@ const UserInfoPage = () => {
   }, [dispatch])
 
   useEffect(() => {
+    // khi render vào thì set userInfomation để lấy thông tin user
+    setUserInformation(user);
+  }, [user])
+
+  useEffect(() => {
     const takeLocation = async () => {
       // promise all để call api lấy tên của quốc gia và thành phố
-      const result = await Promise.all([getLocations(0), getLocations(user?.region)])
+      const result = await Promise.all([getLocations(0), getLocations(userInformation?.region)])
 
-      const region = result[0].find((item: ILocationParams) => item.id === user?.region);
-      const state = result[1].find((item: ILocationParams) => item.id === user?.state)
+      const region = result[0].find((item: ILocationParams) => item.id === userInformation?.region);
+      const state = result[1].find((item: ILocationParams) => item.id === userInformation?.state)
 
       setLocations((prev) => {
         return {
@@ -158,8 +189,11 @@ const UserInfoPage = () => {
       })
     }
 
-    takeLocation();
-  }, [])
+    // sau khi có userInformation thì take location
+    if (userInformation) {
+      takeLocation();
+    }
+  }, [userInformation])
 
   if (loading) {
     return <Loading />
@@ -168,7 +202,7 @@ const UserInfoPage = () => {
   return (
     <>
       <div className="d-flex align-items-center justify-content-center ">
-        {user?.token && (
+        {userInformation && (
           <div className="container mt-5 p-5 shadow" style={{ maxWidth: '700px' }}>
             <div
               className="rounded-circle bg-primary d-flex align-items-center justify-content-center mx-auto mb-3 user-img"
@@ -183,23 +217,35 @@ const UserInfoPage = () => {
             >
               {user?.avatar ? (
                 <img
-                  src={`${BASE_URL}${user?.avatar}`}
+                  src={`${BASE_URL}${userInformation?.avatar}`}
                   style={{
                     width: '100%',
                   }}
                 />
               ) : (
                 <p className="m-0" style={{ fontSize: '50px', fontWeight: 'bold' }}>
-                  {user?.name.charAt(0).toUpperCase()}
+                  {userInformation?.name.charAt(0).toUpperCase()}
                 </p>
               )}
               {/* input file */}
-              <input type="file" hidden ref={fileRef} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleUserImgChange(e)} />
+              <input
+                type="file"
+                hidden
+                ref={fileRef}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleUserImgChange(e)}
+                accept="image/*"
+              />
             </div>
-
-            {user?.description && (
+            {errorMessage && (
+              <div className="text-center">
+                <small className="text-danger">
+                  {errorMessage}
+                </small>
+              </div>
+            )}
+            {userInformation?.description && (
               <div>
-                {user?.description}
+                {userInformation?.description}
               </div>
             )}
             <div className="text-center mb-3">
@@ -212,29 +258,29 @@ const UserInfoPage = () => {
                 <FormattedMessage id="email" />
               </label>
               <div className="col-9">
-                {user?.email}
+                {userInformation?.email}
               </div>
             </div>
-            {user.gender && (
+            {userInformation?.gender && (
               <div className="row mb-3">
                 <label className="col-3">
                   <FormattedMessage id="gender" />
                 </label>
                 <div className="col-9">
                   <p className="m-0">
-                    {user?.gender === '1' ? <FormattedMessage id="male" /> : <FormattedMessage id="female" />}
+                    {userInformation?.gender === '1' ? <FormattedMessage id="male" /> : <FormattedMessage id="female" />}
                   </p>
                 </div>
               </div>
             )}
-            {user?.name && (
+            {userInformation?.name && (
               <div className="row mb-3">
                 <label className="col-3 ">
                   <FormattedMessage id="name" />
                 </label>
                 <div className="col-9 text-capitalize">
                   <p className="m-0">
-                    {user?.name}
+                    {userInformation?.name}
                   </p>
                 </div>
               </div>

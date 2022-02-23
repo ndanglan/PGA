@@ -70,9 +70,6 @@ const validateField = (field: string, value: string) => {
   if (value) return '';
   let fieldRequire = '';
   switch (field) {
-    case 'date':
-      fieldRequire = "dateRequire";
-      break;
     case 'currency':
       fieldRequire = "currencyRequire";
       break;
@@ -91,9 +88,21 @@ const validateTotal = (values: string) => {
   return 'totalNotValid'
 }
 
+const validateDate = (values: string) => {
+  if (!values) {
+    return "dateRequire"
+  }
+
+  if (!moment(values, 'DD MMM YY', true).isValid()) {
+    return "dateNotValid"
+  }
+
+  return ''
+}
+
 export const validateTable = (values: ITableData): ITableData => {
   return {
-    date: validateField('date', values.date),
+    date: validateDate(values.date),
     total: validateTotal(values.total),
     currency: validateField('currency', values.currency),
     invoice: values.invoice,

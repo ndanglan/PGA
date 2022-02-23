@@ -36,8 +36,8 @@ export default function reducer(state: AuthState = {}, action: Action) {
     case getType(removeAuthorization): {
       return {
         ...state,
-        auth: {},
-        user: {}
+        user: {},
+        auth: {}
       }
     }
 

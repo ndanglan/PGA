@@ -59,5 +59,6 @@
   "regionRequire": "Vui lòng chọn quốc gia",
   "stateRequire": "Vui lòng chọn thành phố",
   "userInfo": "Thông tin người dùng",
-  "album": "Trang Album"
+  "album": "Trang Album",
+  "dateNotValid": "Ngày tháng phải có định dạng DD MMM YY"
 }

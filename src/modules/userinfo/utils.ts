@@ -6,19 +6,19 @@ const canvasToBlob = (canvas: any): any => {
         resolve(blob)
       },
       'image/jpeg',
-      1
+      1,
     );
-  })
-}
+  });
+};
 
-export async function generateUrlBlob(canvas: any, crop: any) {
+export const generateUrlBlob = async (canvas: any, crop: any) => {
   if (!crop || !canvas) {
-    return;
+    return null;
   }
 
   const blob: Blob = await canvasToBlob(canvas);
 
-  const file = new File([blob], "avatar.jpeg", { type: "image.jpeg" })
+  const file = new File([blob], "avatar.jpeg", { type: "image/jpeg" })
 
   return file
 }
