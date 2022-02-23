@@ -8,7 +8,7 @@ import { AppState } from "../../../redux/reducer";
 
 export function fetchThunk(
   url: string,
-  method: 'get' | 'post' | 'delete' | 'put' = 'get',
+  method: 'get' | 'post' | 'delete' | 'PUT' = 'get',
   body?: object | FormData,
   auth = true,
   contentType?: string,
@@ -16,7 +16,7 @@ export function fetchThunk(
   return async (dispatch, getState) => {
 
     const res = await fetch(url, {
-      credentials: 'include',
+      // credentials: 'include',
       method,
       body: typeof body === 'object' ? JSON.stringify(body) : body,
       headers:
@@ -26,10 +26,9 @@ export function fetchThunk(
             Authorization: Cookies.get(ACCESS_TOKEN_KEY) || '',
           }
           : {
-            'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>',
             Authorization: Cookies.get(ACCESS_TOKEN_KEY) || '',
           },
-      cache: 'no-store',
+      // cache: 'no-store',
     });
 
     const json = await res.json();

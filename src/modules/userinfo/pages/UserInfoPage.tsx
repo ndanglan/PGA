@@ -96,24 +96,47 @@ const UserInfoPage = () => {
       const formData = new FormData();
       formData.append('file', file, file.name);
 
+      // c1 axios
+      // const json = await dispatch(async (dispatch, getState) => {
+      //   const res = await axios.put(API_PATHS.userProfile, formData, {
+      //     headers: {
+      //       'content-type': 'multipart/form-data',
+      //       Authorization: Cookies.get(ACCESS_TOKEN_KEY) || '',
+      //     }
+      //   })
+
+      //   return res
+      // })
+
+      // c2 thunk using fetch 
       const json = await dispatch(async (dispatch, getState) => {
-        const res = await axios.put(API_PATHS.userProfile, formData, {
+        const res = await fetch(API_PATHS.userProfile, {
+          method: 'PUT',
+          body: formData,
           headers: {
-            'content-type': 'multipart/form-data',
             Authorization: Cookies.get(ACCESS_TOKEN_KEY) || '',
-          }
+          },
         })
 
-        return res
+        const data = await res.json();
+
+        return data
       })
 
-      if (json.data.code === RESPONSE_STATUS_SUCCESS) {
+      // // c3 thunk using fetchThunk 
+      // LỖI @@
+      // const json = await dispatch(fetchThunk(API_PATHS.userProfile, 'PUT', formData, true, 'multipart/form-data'))
+
+      console.log(json);
+
+
+      if (json.code === RESPONSE_STATUS_SUCCESS) {
         // khi update thành thông thì lấy lại userInfo
         getUserInfo();
         return;
       }
 
-      setErrorMessage(json.data.message)
+      setErrorMessage(json.message)
       return;
     }
   }
