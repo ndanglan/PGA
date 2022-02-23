@@ -77,7 +77,7 @@ const UserInfoPage = () => {
 
   const getUserInfo = async () => {
     // call Api user
-    const json = await dispatch(fetchThunk(API_PATHS.userProfile));
+    const json = await dispatch(fetchThunk(API_PATHS.userProfile, 'get'));
 
     // nếu trả về thành công thì update vào store và setState để cho vào UI 
     if (json.code === RESPONSE_STATUS_SUCCESS) {
@@ -124,7 +124,7 @@ const UserInfoPage = () => {
       })
 
       // // c3 thunk using fetchThunk 
-      // LỖI @@
+      // LỖI vì đang stringify
       // const json = await dispatch(fetchThunk(API_PATHS.userProfile, 'PUT', formData, true, 'multipart/form-data'))
 
       console.log(json);

@@ -8,7 +8,7 @@ import { AppState } from "../../../redux/reducer";
 
 export function fetchThunk(
   url: string,
-  method: 'get' | 'post' | 'delete' | 'PUT' = 'get',
+  method: 'get' | 'post' | 'delete' | 'PUT',
   body?: object | FormData,
   auth = true,
   contentType?: string,
@@ -16,8 +16,9 @@ export function fetchThunk(
   return async (dispatch, getState) => {
 
     const res = await fetch(url, {
-      // credentials: 'include',
+      credentials: 'include',
       method,
+      // không up được form data vì nó đang stringify
       body: typeof body === 'object' ? JSON.stringify(body) : body,
       headers:
         contentType !== 'multipart/form-data'
@@ -41,3 +42,4 @@ export function fetchThunk(
     // throw new Error('Error');
   };
 }
+
