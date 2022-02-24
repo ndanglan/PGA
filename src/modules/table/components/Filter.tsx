@@ -73,7 +73,7 @@ const Filter = (props: Props) => {
           ? true
           : false}
         value={''}
-        className="text-capitalize"
+        className="text-capitalize "
         key={0}
       >
         {intl.formatMessage({ id: key })}
@@ -105,7 +105,7 @@ const Filter = (props: Props) => {
         {/* Status */}
         <select
           className="form-select"
-          style={{ maxWidth: "100px", color: '#888' }}
+          style={{ maxWidth: "130px", color: '#888' }}
           onChange={(e) => {
             if (e.target.value) {
               setFormValues((prev) => ({
@@ -120,7 +120,7 @@ const Filter = (props: Props) => {
         </select>
 
         {/* Client */}
-        <select className="form-select" style={{ maxWidth: "100px", color: '#888' }}
+        <select className="form-select" style={{ maxWidth: "140px", color: '#888' }}
           onChange={(e) => {
             if (e.target.value) {
 

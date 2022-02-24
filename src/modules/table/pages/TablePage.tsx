@@ -414,8 +414,8 @@ const TablePage = () => {
 
   return (
     <>
-      <div style={{ backgroundColor: '#f6f7fb' }}>
-        <div className="container p-3">
+      <div style={{ backgroundColor: '#f6f7fb' }} className="">
+        <div className="container p-4">
           <TableHeader
             updatedFilter={updatedFilter}
             resetData={resetData}

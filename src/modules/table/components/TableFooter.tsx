@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useCallback, useEffect, useState, memo } from 'react'
 import { Pagination } from 'react-bootstrap'
 import '../../../scss/table/table.scss'
@@ -33,7 +34,9 @@ const TableFooter = (props: Props) => {
   const loadPages = useCallback(() => {
     const items = [
       <Pagination.Item key="first" onClick={() => { setCurrentPage(1) }}>
-        &laquo;
+        <p className="m-0">
+          {'<<'}
+        </p>
       </Pagination.Item>
     ];
 
@@ -81,7 +84,9 @@ const TableFooter = (props: Props) => {
 
     items.push(
       <Pagination.Item key="last" onClick={() => { setCurrentPage(Math.ceil(numberOfData / 10)) }}>
-        &raquo;
+        <p className="m-0">
+          {'>>'}
+        </p>
       </Pagination.Item>
     )
 
