@@ -19,12 +19,16 @@ const TableHeader = (props: Props) => {
           <FormattedMessage id="payrollList" />
         </h2>
         {/* có thể dowload file CSV */}
-        <CSVLink data={props.valueTable} className="d-block text-decoration-none" style={{
-          padding: '0.5rem 0.75rem 0.5rem 0.75rem',
-          borderRadius: '5px',
-          backgroundColor: '#53b8de',
-          color: '#fff'
-        }}>
+        <CSVLink
+          data={props.valueTable}
+          className="d-block text-decoration-none"
+          style={{
+            padding: '0.5rem 0.75rem 0.5rem 0.75rem',
+            borderRadius: '5px',
+            backgroundColor: '#53b8de',
+            color: '#fff',
+          }}
+        >
           <FormattedMessage id="dowloadcsv" />
         </CSVLink>
       </div>

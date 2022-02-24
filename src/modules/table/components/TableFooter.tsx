@@ -30,8 +30,6 @@ const TableFooter = (props: Props) => {
   }, [numberOfData, currentPage])
 
   const loadPages = useCallback(() => {
-    // số item ở trang cuối
-
     const items = [
       <Pagination.Item key="first" onClick={() => { setCurrentPage(1) }}>
         &laquo;
@@ -101,7 +99,7 @@ const TableFooter = (props: Props) => {
         <p className="my-auto" style={{ color: '#29506f', fontWeight: '600' }}>{showingData()}</p>
       </div>
       <div>
-        <Pagination className="d-flex align-items-center justify-content-end">
+        <Pagination className="d-flex align-items-center justify-content-end mb-0">
           {pageItems}
         </Pagination>
       </div>

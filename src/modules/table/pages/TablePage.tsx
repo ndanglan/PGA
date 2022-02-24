@@ -306,6 +306,7 @@ const TablePage = () => {
         return;
       }
 
+      // nếu không filter thì set luôn bằng newArr từ data sau khi filter
       setValueTable(newArr);
 
       setShowModalConfirm({
@@ -330,13 +331,16 @@ const TablePage = () => {
       }
       return;
     }
+
     // tìm đến chỉ số của đối tượng có trùng id 
     const existIndex = data.findIndex(item => item.invoice === id);
     // xét lại với mảng mới
     data[existIndex] = { ...values };
     const newArr = [...data]
+
     // truyền vào store
     dispatch(setTableData(newArr));
+
     // nếu đang filter thì filter rồi mới xét lại vào state
     if (Object.keys(filters.filters).length > 0) {
       // nếu đang filter thì update ở cái mảng đang hiển thị để tránh render
@@ -367,6 +371,7 @@ const TablePage = () => {
       return;
     }
 
+    // nếu không filter thì set luôn bằng newArr từ data sau khi filter
     setValueTable(newArr);
 
     setShowModalConfirm({
