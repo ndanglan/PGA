@@ -5,7 +5,6 @@ import { FormattedMessage } from 'react-intl';
 import { ThunkDispatch } from 'redux-thunk';
 import ReactCrop from 'react-image-crop'
 import { push } from 'connected-react-router';
-import axios from 'axios';
 
 import { Button, Modal } from 'react-bootstrap';
 import { fetchThunk } from '../../common/redux/thunk';
@@ -27,6 +26,8 @@ import { IUser } from '../../../models/userModel';
 const UserInfoPage = () => {
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
   const user = useSelector((state: AppState) => state.profile.user);
+  console.log(user);
+
   const [userInformation, setUserInformation] = useState<IUser>();
   const fileRef = useRef<HTMLInputElement>(null);
   const imgRef = useRef<any>(null);
@@ -66,11 +67,11 @@ const UserInfoPage = () => {
 
     //check nếu đã nhập file 
     if (e.target.files && e.target.files[0]) {
-      const reader = new FileReader();
+      // chuyển file về url mới hiển thị được
+      const file = URL.createObjectURL(e.target.files[0]);
 
-      reader.addEventListener('load', () => setPreviewImg(reader.result as any));
+      setPreviewImg(file as any)
 
-      reader.readAsDataURL(e.target.files[0]);
       handleOpen();
     }
   }
@@ -212,7 +213,7 @@ const UserInfoPage = () => {
     }
 
     // sau khi có userInformation thì take location
-    if (userInformation) {
+    if (userInformation?.id) {
       takeLocation();
     }
   }, [userInformation])

@@ -101,11 +101,13 @@ const Filter = (props: Props) => {
           className="form-select"
           style={{ maxWidth: "100px", color: '#888' }}
           onChange={(e) => {
-            setFormValues((prev) => ({
-              ...prev,
-              status: e.target.value
-            }))
-            props.updatedFilter('status', e.target.value);
+            if (e.target.value) {
+              setFormValues((prev) => ({
+                ...prev,
+                status: e.target.value
+              }))
+              props.updatedFilter('status', e.target.value);
+            }
           }}
         >
           {data.length !== 0 && renderFilter('status')}
@@ -114,12 +116,16 @@ const Filter = (props: Props) => {
         {/* Client */}
         <select className="form-select" style={{ maxWidth: "100px", color: '#888' }}
           onChange={(e) => {
-            setFormValues((prev) => ({
-              ...prev,
-              client: e.target.value
-            }))
-            props.updatedFilter('clientID', e.target.value);
-          }}
+            if (e.target.value) {
+
+              setFormValues((prev) => ({
+                ...prev,
+                client: e.target.value
+              }))
+              props.updatedFilter('clientID', e.target.value);
+            }
+          }
+          }
         >
           {data.length !== 0 && renderFilter('client')}
         </select>
