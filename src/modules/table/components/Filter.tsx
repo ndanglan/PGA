@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker';
 import '../../../scss/table/table.scss'
 import { useSelector } from 'react-redux';
 import { AppState } from '../../../redux/reducer';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 interface Props {
   updatedFilter(type: string, values?: string, dateFrom?: number, dateTo?: number): void,
   resetData(): void,
@@ -21,14 +21,6 @@ const CustomInput = forwardRef(function DateInput(props: any, ref: any) {
 
 const Filter = (props: Props) => {
   const intl = useIntl();
-
-  const [date, setDate] = useState<{
-    from: Date | null,
-    to: Date | null
-  }>({
-    from: null,
-    to: null,
-  });
   const { data } = useSelector((state: AppState) => state.table);
 
   // filter by serverside
@@ -69,7 +61,21 @@ const Filter = (props: Props) => {
 
     // render ra jsx
     renderArr.push(
-      <option value={''} className="text-capitalize" key={0}>
+      <option
+        selected={formValues[key as keyof
+          {
+            status: string,
+            client: string,
+            from: Date | null,
+            to: Date | null
+          }]
+          === ''
+          ? true
+          : false}
+        value={''}
+        className="text-capitalize"
+        key={0}
+      >
         {intl.formatMessage({ id: key })}
       </option>,
     )
@@ -87,10 +93,10 @@ const Filter = (props: Props) => {
 
   useEffect(() => {
     // nếu cả date from và date to được chọn thì mới update filter vào hàm filter
-    if (date.from && date.to) {
-      props.updatedFilter('date', '', date.from?.getTime(), date.to?.getTime())
+    if (formValues.from && formValues.to) {
+      props.updatedFilter('date', '', formValues.from?.getTime(), formValues.to?.getTime())
     }
-  }, [date])
+  }, [formValues?.from, formValues?.to])
 
   return (
     <div className="mt-3 d-flex justify-content-between
@@ -133,14 +139,13 @@ const Filter = (props: Props) => {
         <div>
           <DatePicker
             className="filter-field" placeholderText={intl.formatMessage({ id: "from" })}
-            selected={date.from}
+            selected={formValues.from}
             onChange={(date) => {
-              setDate((prev) => {
-                return {
-                  ...prev,
-                  from: date
-                }
-              })
+
+              setFormValues((prev) => ({
+                ...prev,
+                from: date
+              }))
             }}
             customInput={<CustomInput />}
           />
@@ -148,15 +153,14 @@ const Filter = (props: Props) => {
         <div>
           <DatePicker
             className="filter-field"
-            minDate={date.from}
-            selected={date.to}
+            minDate={formValues.from}
+            selected={formValues.to}
             onChange={(date) => {
-              setDate((prev) => {
-                return {
-                  ...prev,
-                  to: date
-                }
-              })
+
+              setFormValues((prev) => ({
+                ...prev,
+                to: date
+              }))
             }}
             placeholderText={intl.formatMessage({ id: "to" })}
             customInput={<CustomInput />}

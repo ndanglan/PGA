@@ -29,9 +29,13 @@ const DataRow = (props: Props) => {
     <tr className="table-row" key={item.invoice} >
       <td style={{
         color: checkColor(item.status)
-      }}>{intl.formatMessage({
-        id: item.status.toLowerCase()
-      })}</td>
+      }}>
+        <p className="my-auto">
+          {intl.formatMessage({
+            id: item.status.toLowerCase()
+          })}
+        </p>
+      </td>
       <td>{item.date}</td>
       <td>{item.clientID}</td>
       <td>{item.currency}</td>

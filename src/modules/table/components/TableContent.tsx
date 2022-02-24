@@ -50,10 +50,10 @@ const TableContent = (props: Props) => {
       <table className="table table-borderless" style={{ borderCollapse: "separate", borderSpacing: '0 15px' }}>
         <thead>
           <tr style={{ border: 'none' }}>
-            <th scope="col" style={{ color: "#29506f" }}>
+            <th className="text-center" scope="col" style={{ color: "#29506f" }}>
               <FormattedMessage id="status" />
             </th>
-            <th scope="col" style={{ color: "#29506f" }} className="d-flex align-items-center justify-content-start">
+            <th scope="col" style={{ color: "#29506f" }} className="d-flex align-items-center justify-content-center text-center">
               <Dropdown className="d-flex" style={{ cursor: 'pointer' }}>
                 <Dropdown.Toggle as={CustomToggle} id="dropdown">
                   <FormattedMessage id="date" />
@@ -78,15 +78,15 @@ const TableContent = (props: Props) => {
                 </Dropdown.Menu>
               </Dropdown>
             </th>
-            <th scope="col" style={{ color: "#29506f" }}>
+            <th className="text-center" scope="col" style={{ color: "#29506f" }}>
               <FormattedMessage id="client" />
             </th>
-            <th scope="col" style={{ color: "#29506f" }}>
+            <th className="text-center" scope="col" style={{ color: "#29506f" }}>
               <FormattedMessage id="currency" />
             </th>
-            <th scope="col" style={{ color: "#29506f" }} className="d-flex align-items-center justify-content-start">
+            <th scope="col" style={{ color: "#29506f" }} className="d-flex align-items-center justify-content-center text-center">
               <Dropdown className="d-flex" style={{ cursor: 'pointer' }}>
-                <Dropdown.Toggle as={CustomToggle} id="dropdown">
+                <Dropdown.Toggle as={CustomToggle} id="dropdown" className="text-center">
                   <FormattedMessage id="total" />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
@@ -105,11 +105,11 @@ const TableContent = (props: Props) => {
                 </Dropdown.Menu>
               </Dropdown>
             </th>
-            <th scope="col" style={{ color: "#29506f" }}>
+            <th className="text-center" scope="col" style={{ color: "#29506f" }}>
               <FormattedMessage id="invoice" /> #</th>
           </tr>
         </thead>
-        <tbody className="gap-3">
+        <tbody className="gap-3" style={{ overflow: 'hidden' }}>
           {data?.map((item, index) => {
             if (index >= (currentPage - 1) * 10 && index < currentPage * 10) {
               return (

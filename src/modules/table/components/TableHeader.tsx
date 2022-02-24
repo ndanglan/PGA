@@ -25,7 +25,7 @@ const TableHeader = (props: Props) => {
           style={{
             padding: '0.5rem 0.75rem 0.5rem 0.75rem',
             borderRadius: '5px',
-            backgroundColor: '#53b8de',
+            backgroundColor: '#1da9df',
             color: '#fff',
           }}
         >

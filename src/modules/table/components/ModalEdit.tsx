@@ -63,16 +63,16 @@ const ModalEdit = (props: Props) => {
   }, [])
 
   return (
-    <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
+    <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} >
       <Modal.Header closeButton>
         <Modal.Title>
           {title}
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body >
         <form>
           <div className="row mb-3">
-            <label className="col-sm-3 col-form-label">
+            <label className="col-sm-4 col-form-label">
               <FormattedMessage id="status" />
             </label>
             <div className="col-sm d-flex align-items-center">
@@ -84,7 +84,7 @@ const ModalEdit = (props: Props) => {
             </div>
           </div>
           <div className="row mb-3">
-            <label className="col-sm-3 col-form-label">
+            <label className="col-sm-4 col-form-label">
               <FormattedMessage id="date" />
             </label>
             <div className="col-sm">
@@ -106,7 +106,7 @@ const ModalEdit = (props: Props) => {
             </div>
           </div>
           <div className="row mb-3">
-            <label className="col-sm-3 col-form-label">
+            <label className="col-sm-4 col-form-label">
               <FormattedMessage id="client" />
             </label>
             <div className="col-sm">
@@ -128,7 +128,7 @@ const ModalEdit = (props: Props) => {
             </div>
           </div>
           <div className="row mb-3">
-            <label className="col-sm-3 col-form-label">
+            <label className="col-sm-4 col-form-label">
               <FormattedMessage id="currency" />
             </label>
             <div className="col-sm">
@@ -150,7 +150,7 @@ const ModalEdit = (props: Props) => {
             </div>
           </div>
           <div className="row mb-3">
-            <label className="col-sm-3 col-form-label">
+            <label className="col-sm-4 col-form-label">
               <FormattedMessage id="total" />
             </label>
             <div className="col-sm ">
@@ -166,7 +166,7 @@ const ModalEdit = (props: Props) => {
             </div>
           </div>
           <div className="row mb-3">
-            <label className="col-sm-3 col-form-label">
+            <label className="col-sm-4 col-form-label">
               <FormattedMessage id="invoice" />
             </label>
             <div className="col-sm d-flex align-items-center">

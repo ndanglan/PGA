@@ -30,7 +30,7 @@ const UserInfoPage = () => {
 
   const [userInformation, setUserInformation] = useState<IUser>();
   const fileRef = useRef<HTMLInputElement>(null);
-  const imgRef = useRef<any>(null);
+  const imgRef = useRef<HTMLImageElement>();
   const previewCanvasRef = useRef<any>(null);
   const [previewImg, setPreviewImg] = useState('');
   const [crops, setCrops] = useState<any>({
@@ -62,6 +62,17 @@ const UserInfoPage = () => {
   const handleClose = () => setModalShow(false);
   const handleOpen = () => setModalShow(true);
 
+  const getUserInfo = async () => {
+    // call Api user
+    const json = await dispatch(fetchThunk(API_PATHS.userProfile, 'get'));
+
+    // nếu trả về thành công thì update vào store và setState để cho vào UI 
+    if (json.code === RESPONSE_STATUS_SUCCESS) {
+      dispatch(setUserInfo(json?.data))
+      setUserInformation(json?.data)
+    }
+  }
+
   const handleUserImgChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
 
@@ -73,17 +84,6 @@ const UserInfoPage = () => {
       setPreviewImg(file as any)
 
       handleOpen();
-    }
-  }
-
-  const getUserInfo = async () => {
-    // call Api user
-    const json = await dispatch(fetchThunk(API_PATHS.userProfile, 'get'));
-
-    // nếu trả về thành công thì update vào store và setState để cho vào UI 
-    if (json.code === RESPONSE_STATUS_SUCCESS) {
-      dispatch(setUserInfo(json?.data))
-      setUserInformation(json?.data)
     }
   }
 

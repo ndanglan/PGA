@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState, memo } from 'react'
 import { Pagination } from 'react-bootstrap'
+import '../../../scss/table/table.scss'
 
 type Props = {
   numberOfData: number,
@@ -99,7 +100,7 @@ const TableFooter = (props: Props) => {
         <p className="my-auto" style={{ color: '#29506f', fontWeight: '600' }}>{showingData()}</p>
       </div>
       <div>
-        <Pagination className="d-flex align-items-center justify-content-end mb-0">
+        <Pagination className="d-flex align-items-center justify-content-end mb-0 gap-3 pagination-custom">
           {pageItems}
         </Pagination>
       </div>
