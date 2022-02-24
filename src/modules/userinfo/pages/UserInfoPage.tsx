@@ -114,6 +114,7 @@ const UserInfoPage = () => {
           method: 'PUT',
           body: formData,
           headers: {
+            // 'content-type': 'multipart/form-data',
             Authorization: Cookies.get(ACCESS_TOKEN_KEY) || '',
           },
         })
@@ -126,8 +127,6 @@ const UserInfoPage = () => {
       // // c3 thunk using fetchThunk 
       // LỖI vì đang stringify
       // const json = await dispatch(fetchThunk(API_PATHS.userProfile, 'PUT', formData, true, 'multipart/form-data'))
-
-      console.log(json);
 
 
       if (json.code === RESPONSE_STATUS_SUCCESS) {

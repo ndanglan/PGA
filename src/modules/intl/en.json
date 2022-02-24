@@ -60,5 +60,9 @@
   "stateRequire": "Choose your state",
   "userInfo": "User Information",
   "album": "Album",
-  "dateNotValid": "Date must have format DD MMM YY"
+  "dateNotValid": "Date must have format DD MMM YY",
+  "dateRequire": "Date field is required",
+  "totalNotValid": "Format of money is not valid",
+  "currencyRequire": "Currency is required",
+  "clientRequire": "Client is required"
 }

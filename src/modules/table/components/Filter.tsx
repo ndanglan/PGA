@@ -21,6 +21,7 @@ const CustomInput = forwardRef(function DateInput(props: any, ref: any) {
 
 const Filter = (props: Props) => {
   const intl = useIntl();
+
   const [date, setDate] = useState<{
     from: Date | null,
     to: Date | null
@@ -72,11 +73,11 @@ const Filter = (props: Props) => {
         {intl.formatMessage({ id: key })}
       </option>,
     )
-    keyArr.map((item) => {
 
+    keyArr.map((item) => {
       renderArr.push(
         <option value={item} key={item}>
-          {item}
+          {intl.messages[item.toLowerCase()] ? intl.formatMessage({ id: item.toLowerCase() }) : item}
         </option>
       )
     })

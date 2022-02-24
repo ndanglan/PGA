@@ -77,7 +77,9 @@ const ModalEdit = (props: Props) => {
             </label>
             <div className="col-sm d-flex align-items-center">
               <label style={{ color: checkColor(formValues.status) }}>
-                <FormattedMessage id={formValues.status.toLowerCase()} />
+                {formValues.status && (
+                  <FormattedMessage id={formValues.status.toLowerCase()} />
+                )}
               </label>
             </div>
           </div>
@@ -130,7 +132,10 @@ const ModalEdit = (props: Props) => {
               <FormattedMessage id="currency" />
             </label>
             <div className="col-sm">
-              <input className="form-control form-control my-auto w-100" type="text" value={formValues.currency}
+              <input
+                className="form-control form-control my-auto w-100"
+                type="text"
+                value={formValues.currency}
                 onChange={(e) => {
                   setFormValues(prev => ({
                     ...prev,

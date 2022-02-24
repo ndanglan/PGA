@@ -271,6 +271,10 @@ const TablePage = () => {
 
       // truyền lên redux
       dispatch(setTableData(newArr))
+
+      // các item ở trang cuối 
+      const remainer = valueTable.length % 10;
+
       // sau khi truyền mảng mới vào redux thì xét xem có đang ở trạng thái filter nào không nếu có thì filter rồi mới set vào state mới
       if (Object.keys(filters.filters).length > 0) {
         // nếu data đang hiển thị là ở trạng thái filters thì xóa ở cái data đó luôn tránh render lại lần nữa
@@ -293,6 +297,11 @@ const TablePage = () => {
             }
           },
         })
+
+        // check nếu item cuối cùng của trang bj xóa thì setCurrentPage thành trang cuối cùng sau khi xóa
+        if (remainer === 1) {
+          setCurrentPage(Math.ceil(valueTable.length / 10) - 1);
+        }
         return;
       }
 
@@ -313,6 +322,10 @@ const TablePage = () => {
           }
         },
       })
+
+      if (remainer === 1) {
+        setCurrentPage(Math.ceil(valueTable.length / 10) - 1);
+      }
       return;
     }
     // tìm đến chỉ số của đối tượng có trùng id 
@@ -399,7 +412,8 @@ const TablePage = () => {
           <TableHeader
             updatedFilter={updatedFilter}
             resetData={resetData}
-            valueTable={valueTable} />
+            valueTable={valueTable}
+          />
           <TableContent
             data={valueTable}
             currentPages={currentPage}
@@ -408,7 +422,8 @@ const TablePage = () => {
             onSorting={updatedSorting}
           />
           <TableFooter
-            numberOfData={valueTable.length} setCurrentPage={setCurrentPage}
+            numberOfData={valueTable.length}
+            setCurrentPage={setCurrentPage}
             currentPage={currentPage}
           />
         </div>

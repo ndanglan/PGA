@@ -60,5 +60,9 @@
   "stateRequire": "Vui lòng chọn thành phố",
   "userInfo": "Thông tin người dùng",
   "album": "Trang Album",
-  "dateNotValid": "Ngày tháng phải có định dạng DD MMM YY"
+  "dateNotValid": "Ngày tháng phải có định dạng DD MMM YY",
+  "dateRequire": "Vui lòng nhập ngày tháng",
+  "totalNotValid": "Định dạng tiền không hợp lệ",
+  "currencyRequire": "Vui lòng nhập đơn vị tiền tệ",
+  "clientRequire": "Vui lòng nhập tên khách hàng"
 }
