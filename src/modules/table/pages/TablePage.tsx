@@ -300,6 +300,7 @@ const TablePage = () => {
 
         // check nếu item cuối cùng của trang bj xóa thì setCurrentPage thành trang cuối cùng sau khi xóa
         if (remainer === 1) {
+          // vẫn phải rerender lại row vì đang render row table dựa vào currentPage không thể memo được
           setCurrentPage(Math.ceil(valueTable.length / 10) - 1);
         }
         return;
@@ -324,6 +325,7 @@ const TablePage = () => {
       })
 
       if (remainer === 1) {
+        // vẫn phải rerender lại row vì đang render row table dựa vào currentPage không thể memo được
         setCurrentPage(Math.ceil(valueTable.length / 10) - 1);
       }
       return;
@@ -416,7 +418,7 @@ const TablePage = () => {
           />
           <TableContent
             data={valueTable}
-            currentPages={currentPage}
+            currentPage={currentPage}
             onDelete={setShowModalConfirm}
             onEdit={setShowModalEdit}
             onSorting={updatedSorting}

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState, memo } from 'react'
 import { Pagination } from 'react-bootstrap'
 
 type Props = {
@@ -109,4 +109,4 @@ const TableFooter = (props: Props) => {
   )
 }
 
-export default TableFooter
+export default memo(TableFooter)
