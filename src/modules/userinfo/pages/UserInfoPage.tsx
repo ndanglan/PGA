@@ -203,11 +203,26 @@ const UserInfoPage = () => {
       const region = result[0].find((item: ILocationParams) => item.id === userInformation?.region);
       const state = result[1].find((item: ILocationParams) => item.id === userInformation?.state)
 
+      if (region && state) {
+        setLocations((prev) => {
+          return {
+            ...prev,
+            region: region,
+            state: state
+          }
+        })
+        return;
+      }
+
       setLocations((prev) => {
         return {
           ...prev,
           region: region,
-          state: state
+          state: {
+            id: '',
+            name: '',
+            pid: null
+          }
         }
       })
     }
@@ -238,7 +253,7 @@ const UserInfoPage = () => {
                 fileRef.current?.click();
               }}
             >
-              {user?.avatar ? (
+              {userInformation?.avatar ? (
                 <img
                   src={`${BASE_URL}${userInformation?.avatar}`}
                   style={{
@@ -319,13 +334,22 @@ const UserInfoPage = () => {
               </div>
             )}
             {
-              locations.state.name && (
+              locations.state.name ? (
                 <div className="row mb-3">
                   <label className="col-3">
                     <FormattedMessage id="state" />
                   </label>
                   <div className="col-9">
                     {locations.state.name}
+                  </div>
+                </div>
+              ) : (
+                <div className="row mb-3">
+                  <label className="col-3">
+                    <FormattedMessage id="state" />
+                  </label>
+                  <div className="col-9">
+                    Not Found
                   </div>
                 </div>
               )
